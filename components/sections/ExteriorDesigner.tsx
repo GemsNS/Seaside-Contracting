@@ -61,8 +61,8 @@ export function ExteriorDesigner() {
   const [sidingMaterial, setSidingMaterial] = useState<SidingMaterialId>("fiber-cement-hardie");
   const [sidingProfile, setSidingProfile] =
     useState<(typeof SIDING_PROFILES)[number]["id"]>("lap");
-  const [sidingColor, setSidingColor] = useState(JAMES_HARDIE_COLORS[1].hex);
-  const [sidingColorName, setSidingColorName] = useState(JAMES_HARDIE_COLORS[1].name);
+  const [sidingColor, setSidingColor] = useState<string>(JAMES_HARDIE_COLORS[1].hex);
+  const [sidingColorName, setSidingColorName] = useState<string>(JAMES_HARDIE_COLORS[1].name);
   const [roofTrimColor, setRoofTrimColor] = useState("#FFFFFF");
 
   const [windowStyle, setWindowStyle] = useState<(typeof WINDOW_STYLES)[number]["id"]>(
@@ -86,10 +86,10 @@ export function ExteriorDesigner() {
     DOOR_GLASS_LITES[0].id,
   );
   const [doorFinishType, setDoorFinishType] = useState<"paint" | "stain">("paint");
-  const [doorColorLabel, setDoorColorLabel] = useState(PAINT_FINISHES[1]);
-  const [doorStainLabel, setDoorStainLabel] = useState(STAIN_FINISHES[2]);
+  const [doorColorLabel, setDoorColorLabel] = useState<string>(PAINT_FINISHES[1]);
+  const [doorStainLabel, setDoorStainLabel] = useState<string>(STAIN_FINISHES[2]);
   const [doorPanelColor, setDoorPanelColor] = useState("#2a2a2a");
-  const [entryHardwareFinish, setEntryHardwareFinish] = useState(HARDWARE_FINISHES[1]);
+  const [entryHardwareFinish, setEntryHardwareFinish] = useState<string>(HARDWARE_FINISHES[1]);
   const [smartLock, setSmartLock] = useState(false);
 
   const pattern = useMemo(() => sidingPatternCss(sidingProfile), [sidingProfile]);
@@ -115,7 +115,7 @@ export function ExteriorDesigner() {
       "── WINDOWS ──",
       `Style: ${WINDOW_STYLES.find((w) => w.id === windowStyle)?.label}`,
       `Frame: ${WINDOW_FRAMES.find((f) => f.id === windowFrame)?.label}`,
-      thermalBreakNote ? "Note: Aluminum frame — thermal break required (code)." : null,
+      thermalBreakNote ? "Note: Aluminum frame — thermal break required (code)." : "",
       `Glazing: ${GLAZING_PACKAGES.find((g) => g.id === glazing)?.label}`,
       `Hardware: ${WINDOW_HARDWARE.find((h) => h.id === winHardware)?.label}`,
       `Frame colour (exterior preview): ${windowFrameExteriorColor}`,
@@ -127,11 +127,11 @@ export function ExteriorDesigner() {
       `Glass proportion: ${DOOR_GLASS_LITES.find((l) => l.id === doorLite)?.label}`,
       `Finish: ${doorFinishType === "paint" ? "Paint — " + doorColorLabel : "Stain — " + doorStainLabel}`,
       `Hardware finish: ${entryHardwareFinish}`,
-      smartLock ? "Upgrade: Smart / keyless lock interest" : null,
+      smartLock ? "Upgrade: Smart / keyless lock interest" : "",
       "",
       coastalMode
         ? "── COASTAL NS ── Prioritize marine-grade hardware, high DP glazing, salt-tolerant cladding where applicable."
-        : null,
+        : "",
       "",
       "Please prepare a quote from these selections (subject to site measure & code).",
     ];

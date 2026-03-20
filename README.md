@@ -27,7 +27,7 @@ Add a [Resend](https://resend.com) API key to `.env.local` so `POST /api/contact
 
 ## Push to GitHub (first time)
 
-Use branch **`main`** so the [GitHub Pages workflow](.github/workflows/deploy-github-pages.yml) runs on push.
+Use branch **`main`** (or **`master`**) so the [GitHub Pages workflow](.github/workflows/deploy-github-pages.yml) runs on push.
 
 1. On [github.com/new](https://github.com/new), create a **new empty repository** (no README, no `.gitignore`, no license—avoids merge noise). Copy the repo URL, e.g. `https://github.com/YOUR_USER/YOUR_REPO.git`.
 
@@ -72,7 +72,7 @@ GitHub Pages serves **static files only** (no Node server, no `app/api`). This r
 
 1. Repo is already on GitHub (see **Push to GitHub** above).
 2. **Settings → Pages → Build and deployment**: set **Source** to **GitHub Actions** (not “Deploy from a branch”).
-3. The workflow [`.github/workflows/deploy-github-pages.yml`](.github/workflows/deploy-github-pages.yml) runs on pushes to **`main`**. It removes `app/api` before building (required for static export).
+3. The workflow [`.github/workflows/deploy-github-pages.yml`](.github/workflows/deploy-github-pages.yml) runs on pushes to **`main`** or **`master`**, and can be run manually (**Actions** → **Deploy to GitHub Pages** → **Run workflow**). It removes `app/api` before building (required for static export).
 4. **URL**
    - **Project site** (most repos): `https://YOUR_USERNAME.github.io/REPO_NAME/`
    - **User site** (repo named `YOUR_USERNAME.github.io`): `https://YOUR_USERNAME.github.io/` with no subpath.
@@ -84,6 +84,21 @@ GitHub Pages serves **static files only** (no Node server, no `app/api`). This r
 `public/.nojekyll` is included so GitHub Pages does not ignore folders like `_next`.
 
 **Easier alternative:** deploy the full Next.js app (including API routes) on [Vercel](https://vercel.com) or [Netlify](https://www.netlify.com) with zero static-export caveats.
+
+### “Site not found” / **There isn’t a GitHub Pages site here** (404)
+
+That message means **nothing has been published yet**—usually configuration or the workflow hasn’t completed—not a bug in the Next.js app.
+
+| Check | What to do |
+|--------|------------|
+| **1. Pages source** | **Settings → Pages → Build and deployment**. **Source** must be **GitHub Actions** (not “Deploy from a branch” / not empty). Save if you changed it. |
+| **2. Green workflow** | **Actions** → **Deploy to GitHub Pages**. The latest run should be **green**. If it’s red, open it and read the failed step’s log. |
+| **3. Branch** | The workflow only runs on **`main`** or **`master`**. If your code is only on another branch, merge to `main` or push `main`. |
+| **4. First deploy approval** | Some repos show **“Waiting for approval”** for the `github-pages` environment. Open the workflow run in **Actions** and **approve** the deployment if prompted. |
+| **5. Run manually** | **Actions** → **Deploy to GitHub Pages** → **Run workflow** → **Run workflow** (helps after you enable Pages or fix settings). |
+| **6. URL** | For a repo named `Seaside-Contracting` under user `GemsNS`, use: **`https://gemsns.github.io/Seaside-Contracting/`** (trailing slash is fine). Wait 1–2 minutes after a successful deploy before refreshing. |
+
+**Private repo:** On a free personal account, GitHub Pages for **private** repositories may be limited; use a **public** repo for free hosting, or upgrade.
 
 ## Run the site
 

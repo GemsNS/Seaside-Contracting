@@ -151,7 +151,7 @@ export const HARDWARE_FINISHES = [
 
 export function doorAllowsStain(substrateId: DoorSubstrateId): boolean {
   const s = DOOR_SUBSTRATES.find((x) => x.id === substrateId);
-  return s?.finishes.includes("stain") ?? false;
+  return s ? [...s.finishes].includes("stain") : false;
 }
 
 export function doorFinishOptions(substrateId: DoorSubstrateId): ("paint" | "stain")[] {
