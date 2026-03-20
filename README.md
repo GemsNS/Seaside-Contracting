@@ -23,11 +23,54 @@ copy .env.example .env.local
 
 Add a [Resend](https://resend.com) API key to `.env.local` so `POST /api/contact` can send email. Without `RESEND_API_KEY`, submissions validate but return HTTP 503 with a configuration message.
 
+`.env.local` is gitignored—safe to keep secrets only on your machine.
+
+## Push to GitHub (first time)
+
+Use branch **`main`** so the [GitHub Pages workflow](.github/workflows/deploy-github-pages.yml) runs on push.
+
+1. On [github.com/new](https://github.com/new), create a **new empty repository** (no README, no `.gitignore`, no license—avoids merge noise). Copy the repo URL, e.g. `https://github.com/YOUR_USER/YOUR_REPO.git`.
+
+2. In a terminal, from **this project folder** (the one that contains `package.json`):
+
+```bash
+git status
+```
+
+If you see *“not a git repository”*, initialize and commit:
+
+```bash
+git init
+git add -A
+git commit -m "Initial commit: Seaside Contracting site"
+git branch -M main
+```
+
+If Git already exists, just stage and commit your changes:
+
+```bash
+git add -A
+git commit -m "Describe your changes"
+```
+
+3. Add the remote **once** (replace with your URL), then push:
+
+```bash
+git remote add origin https://github.com/YOUR_USER/YOUR_REPO.git
+git push -u origin main
+```
+
+If `origin` already exists from an old URL, use `git remote set-url origin https://github.com/YOUR_USER/YOUR_REPO.git` instead of `add`.
+
+4. **Authentication:** GitHub no longer accepts account passwords for `git push`. Use **HTTPS + [Personal Access Token](https://github.com/settings/tokens)** (repo scope), **GitHub CLI** (`gh auth login` then push), or **SSH** (`git@github.com:YOUR_USER/YOUR_REPO.git`).
+
+After a successful push, continue with **Deploy to GitHub Pages** below if you want the live site on `github.io`.
+
 ## Deploy to GitHub Pages
 
 GitHub Pages serves **static files only** (no Node server, no `app/api`). This repo includes a workflow that runs **`next build`** with **`output: 'export'`** and uploads the **`out/`** folder.
 
-1. Push the repo to GitHub.
+1. Repo is already on GitHub (see **Push to GitHub** above).
 2. **Settings → Pages → Build and deployment**: set **Source** to **GitHub Actions** (not “Deploy from a branch”).
 3. The workflow [`.github/workflows/deploy-github-pages.yml`](.github/workflows/deploy-github-pages.yml) runs on pushes to **`main`**. It removes `app/api` before building (required for static export).
 4. **URL**
