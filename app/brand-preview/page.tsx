@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { withBasePath } from "@/lib/withBasePath";
 
 /**
  * Secluded page: vehicle wraps + four `1 (1)` … `1 (4).png` brand-direction boards.
@@ -88,7 +89,7 @@ export default function BrandPreviewPage() {
               </h2>
               <div className="overflow-hidden rounded-lg border border-base-black/10 bg-base-white shadow-sm">
                 <Image
-                  src={item.src}
+                  src={withBasePath(item.src)}
                   alt={item.title}
                   width={2400}
                   height={1600}

@@ -77,7 +77,7 @@ GitHub Pages serves **static files only** (no Node server, no `app/api`). This r
    - **Project site** (most repos): `https://YOUR_USERNAME.github.io/REPO_NAME/`
    - **User site** (repo named `YOUR_USERNAME.github.io`): `https://YOUR_USERNAME.github.io/` with no subpath.
 
-`basePath` is computed automatically from the repository name.
+`basePath` is computed automatically from the repository name. The same value is passed as **`NEXT_PUBLIC_BASE_PATH`** so static assets in **`public/`** (logos, brand PNGs) resolve correctly—Next.js does not prefix `public/` URLs for you. Components use [`lib/withBasePath.ts`](lib/withBasePath.ts).
 
 **Contact form on Pages:** the static site cannot call `/api/contact` on `github.io`. Deploy the **same** app on **Vercel** (or any host that runs Next.js API routes), then add a repository **secret** named `NEXT_PUBLIC_CONTACT_API_URL` with your live API URL, e.g. `https://your-project.vercel.app/api/contact`. The contact route allows cross-origin POSTs from the browser. Configure `RESEND_API_KEY` and related env vars on that Vercel project.
 

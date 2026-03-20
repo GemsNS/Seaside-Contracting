@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { withBasePath } from "@/lib/withBasePath";
 
 /**
  * Raster wordmarks from `/public/brand/` (source: `assets/logo1.png`, `assets/whitebanner1.png`).
@@ -13,7 +14,7 @@ type BrandLogoProps = {
 };
 
 export function BrandLogo({ className, onDark = false }: BrandLogoProps) {
-  const src = onDark ? "/brand/logo-on-dark.png" : "/brand/logo-main.png";
+  const src = withBasePath(onDark ? "/brand/logo-on-dark.png" : "/brand/logo-main.png");
 
   return (
     <Image

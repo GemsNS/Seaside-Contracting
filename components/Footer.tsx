@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { withBasePath } from "@/lib/withBasePath";
 
 const quick = [
   { href: "/", label: "Home" },
@@ -16,7 +17,7 @@ export function Footer() {
           <div className="lg:col-span-5">
             <div className="inline-block rounded-lg bg-white p-3 shadow-sm">
               <Image
-                src="/brand/footer-crest.png"
+                src={withBasePath("/brand/footer-crest.png")}
                 alt="Seaside Contracting"
                 width={260}
                 height={140}
