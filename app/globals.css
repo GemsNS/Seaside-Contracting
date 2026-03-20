@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Seaside Contracting — brand tokens from brand-guide.md
+ */
+:root {
+  --primary-aqua: #00b4d8;
+  --base-black: #121212;
+  --base-white: #ffffff;
+  --neutral-offwhite: #f8f9fa;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-base-white text-base-black antialiased;
+}
