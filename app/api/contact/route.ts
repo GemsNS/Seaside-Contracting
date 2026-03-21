@@ -42,11 +42,16 @@ export async function POST(req: Request) {
     return json({ error: "Invalid payload" }, 400);
   }
 
-  const { name, email, phone, details } = body as Record<string, unknown>;
+  const { name, email, phone, details, quoteType } = body as Record<string, unknown>;
   const nameStr = typeof name === "string" ? name.trim() : "";
   const emailStr = typeof email === "string" ? email.trim() : "";
   const phoneStr = typeof phone === "string" ? phone.trim() : "";
   const detailsStr = typeof details === "string" ? details.trim() : "";
+  const quoteTypeRaw = typeof quoteType === "string" ? quoteType.trim() : "";
+  const quoteTypeStr =
+    quoteTypeRaw === "other" ? "other" : quoteTypeRaw === "exterior" ? "exterior" : "exterior";
+  const quoteLabel =
+    quoteTypeStr === "other" ? "Other services (no exterior package)" : "Exterior package";
 
   if (!nameStr || nameStr.length > LIMITS.name) {
     return json({ error: "Please enter a valid name." }, 400);
@@ -81,8 +86,9 @@ export async function POST(req: Request) {
     from,
     to: [to],
     replyTo: emailStr,
-    subject: `New project inquiry — ${nameStr}`,
+    subject: `New inquiry (${quoteTypeStr === "other" ? "other services" : "exterior"}) — ${nameStr}`,
     html: `
+      <p><strong>Quote type:</strong> ${escapeHtml(quoteLabel)}</p>
       <p><strong>Name:</strong> ${escapeHtml(nameStr)}</p>
       <p><strong>Email:</strong> ${escapeHtml(emailStr)}</p>
       <p><strong>Phone:</strong> ${escapeHtml(phoneStr)}</p>

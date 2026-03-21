@@ -98,10 +98,10 @@ export function Hero() {
           <Image
             src={withBasePath("/brand/header-crest.png")}
             alt="Seaside Contracting — house, sun, and wave mark"
-            width={520}
-            height={400}
-            className="h-auto w-full max-w-[min(100%,420px)] object-contain drop-shadow-sm lg:max-w-[min(100%,480px)]"
-            sizes="(max-width: 1024px) 90vw, 480px"
+            width={400}
+            height={308}
+            className="h-auto w-full max-w-[min(100%,300px)] object-contain drop-shadow-sm sm:max-w-[min(100%,340px)] lg:max-w-[min(100%,380px)]"
+            sizes="(max-width: 640px) 85vw, (max-width: 1024px) 40vw, 380px"
             priority
             unoptimized
           />

@@ -30,10 +30,13 @@ function loadQuoteSummary(): string {
   }
 }
 
+export type QuoteType = "exterior" | "other";
+
 export function ContactForm() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
   const [details, setDetails] = useState("");
+  const [quoteType, setQuoteType] = useState<QuoteType>("exterior");
 
   const applyStoredQuote = useCallback(() => {
     const block = loadQuoteSummary();
@@ -42,11 +45,27 @@ export function ContactForm() {
   }, []);
 
   useEffect(() => {
-    applyStoredQuote();
+    if (quoteType === "exterior") {
+      applyStoredQuote();
+    }
+  }, [applyStoredQuote, quoteType]);
+
+  const handleQuoteTypeChange = useCallback((next: QuoteType) => {
+    setQuoteType(next);
+    if (next === "exterior") {
+      applyStoredQuote();
+    } else {
+      setDetails((d) =>
+        d.trim().startsWith("[Exterior configuration") ? "" : d,
+      );
+    }
   }, [applyStoredQuote]);
 
   useEffect(() => {
-    const onPrefill = () => applyStoredQuote();
+    const onPrefill = () => {
+      setQuoteType("exterior");
+      applyStoredQuote();
+    };
     window.addEventListener("seaside-quote-prefill", onPrefill);
     return () => window.removeEventListener("seaside-quote-prefill", onPrefill);
   }, [applyStoredQuote]);
@@ -88,7 +107,13 @@ export function ContactForm() {
       const res = await fetch(contactApiUrl(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone, details: detailsStr }),
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          details: detailsStr,
+          quoteType,
+        }),
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
 
@@ -112,6 +137,46 @@ export function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+      <fieldset className="space-y-3 rounded-lg border border-base-black/10 bg-base-white/50 px-3 py-3 sm:px-4">
+        <legend className="px-1 text-sm font-semibold text-base-black">
+          What kind of quote do you need?
+        </legend>
+        <label className="flex cursor-pointer items-start gap-3 text-sm text-base-black/85">
+          <input
+            type="radio"
+            name="quoteType"
+            value="exterior"
+            checked={quoteType === "exterior"}
+            onChange={() => handleQuoteTypeChange("exterior")}
+            className="mt-1 h-4 w-4 border-base-black/20 text-primary-aqua focus:ring-primary-aqua"
+          />
+          <span>
+            <span className="font-medium text-base-black">Exterior package</span>
+            <span className="mt-0.5 block text-xs text-base-black/55">
+              Siding, windows, and/or doors — optionally build selections in the designer above and
+              attach the summary here.
+            </span>
+          </span>
+        </label>
+        <label className="flex cursor-pointer items-start gap-3 text-sm text-base-black/85">
+          <input
+            type="radio"
+            name="quoteType"
+            value="other"
+            checked={quoteType === "other"}
+            onChange={() => handleQuoteTypeChange("other")}
+            className="mt-1 h-4 w-4 border-base-black/20 text-primary-aqua focus:ring-primary-aqua"
+          />
+          <span>
+            <span className="font-medium text-base-black">Other services</span>
+            <span className="mt-0.5 block text-xs text-base-black/55">
+              Decks, roofing, renovations, general contracting, etc. No exterior configuration
+              required—describe your project below.
+            </span>
+          </span>
+        </label>
+      </fieldset>
+
       <div>
         <label htmlFor="contact-name" className="block text-sm font-semibold text-base-black">
           Name
@@ -163,7 +228,11 @@ export function ContactForm() {
           maxLength={LIMITS.details}
           value={details}
           onChange={(e) => setDetails(e.target.value)}
-          placeholder="Tell us about your project, timeline, and location…"
+          placeholder={
+            quoteType === "exterior"
+              ? "Tell us about your project, timeline, and location…"
+              : "Describe the work you need (e.g. deck build, roof replacement, renovation scope), timeline, and location…"
+          }
           className="mt-2 w-full resize-y rounded-md border border-base-black/15 bg-base-white px-3 py-2.5 text-sm text-base-black outline-none ring-primary-aqua/30 transition-shadow focus:border-primary-aqua focus:ring-2"
         />
       </div>

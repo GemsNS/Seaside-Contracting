@@ -12,26 +12,27 @@ const quick = [
 export function Footer() {
   return (
     <footer className="border-t border-white/10 bg-base-black text-base-white">
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-5">
-            <div className="inline-block rounded-lg bg-white p-3 shadow-sm">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+        <div className="flex flex-col gap-8 sm:gap-10 md:flex-row md:items-start md:justify-between md:gap-x-8 lg:gap-12">
+          {/* Logo card: w-fit so the white box hugs the image — no horizontal stretch */}
+          <div className="flex w-fit max-w-full shrink-0 justify-center self-start md:justify-start">
+            <div className="w-fit max-w-full rounded-lg bg-white p-2.5 shadow-sm sm:p-3">
               <Image
                 src={withBasePath("/brand/logo-main.png")}
                 alt="Seaside Contracting"
                 width={360}
                 height={120}
                 unoptimized
-                className="h-auto w-[min(100%,280px)] object-contain object-left sm:w-[min(100%,320px)]"
+                className="h-auto w-auto max-w-[220px] object-contain object-left sm:max-w-[240px] md:max-w-[260px] lg:max-w-[280px]"
               />
             </div>
           </div>
 
-          <nav className="lg:col-span-3" aria-label="Footer">
+          <nav className="shrink-0 text-left" aria-label="Footer">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-aqua">
               Navigate
             </p>
-            <ul className="mt-4 space-y-2 text-sm font-semibold">
+            <ul className="mt-3 space-y-2 text-sm font-semibold sm:mt-4">
               {quick.map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className="text-base-white/85 hover:text-primary-aqua">
@@ -42,11 +43,11 @@ export function Footer() {
             </ul>
           </nav>
 
-          <div className="lg:col-span-4">
+          <div className="min-w-0 shrink-0 text-left md:text-right">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-aqua">
               Contact
             </p>
-            <ul className="mt-4 space-y-3 text-sm text-base-white/85">
+            <ul className="mt-3 space-y-2.5 text-sm text-base-white/85 sm:mt-4 sm:space-y-3">
               <li>
                 <a href="tel:+19028099412" className="font-semibold hover:text-primary-aqua">
                   (902) 809-9412
@@ -62,7 +63,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-white/10 pt-8">
+        <div className="mt-8 border-t border-white/10 pt-6 sm:mt-12 sm:pt-8">
           <p className="text-xs text-base-white/55">
             © 2026 Seaside Contracting. All rights reserved.
           </p>

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Menu, Phone, X } from "lucide-react";
-import { BrandLogo } from "@/components/BrandLogo";
 
 const nav = [
   { href: "/", label: "Home" },
@@ -52,8 +51,11 @@ export function Header() {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-          <Link href="/" className="flex shrink-0 items-center" aria-label="Seaside Contracting home">
-            <BrandLogo />
+          <Link
+            href="/"
+            className={`min-w-0 shrink-0 font-semibold uppercase tracking-wide transition-colors text-xs sm:text-sm ${linkClass}`}
+          >
+            Seaside Contracting
           </Link>
           <span
             className={`hidden h-8 w-px shrink-0 md:block ${onDark ? "bg-base-white/25" : "bg-base-black/15"}`}

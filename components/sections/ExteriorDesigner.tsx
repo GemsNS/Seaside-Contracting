@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Check, Info } from "lucide-react";
 import { HousePreview } from "@/components/exterior/HousePreview";
+import { Switch } from "@/components/ui/Switch";
 import {
   type DoorSubstrateId,
   type SidingMaterialId,
@@ -27,6 +28,7 @@ import {
 } from "@/lib/exteriorConfiguratorData";
 
 const STORAGE_KEY = "seasideExteriorQuote";
+const SHOW_DESIGNER_KEY = "seaside-show-exterior-designer";
 
 const TABS: { id: TabId; label: string; short: string }[] = [
   { id: "siding", label: "Siding & cladding", short: "Siding" },
@@ -55,8 +57,28 @@ function sidingPatternCss(
 }
 
 export function ExteriorDesigner() {
+  const [showDesigner, setShowDesigner] = useState(true);
   const [tab, setTab] = useState<TabId>("siding");
   const [coastalMode, setCoastalMode] = useState(true);
+
+  useEffect(() => {
+    try {
+      if (localStorage.getItem(SHOW_DESIGNER_KEY) === "0") {
+        setShowDesigner(false);
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const persistShowDesigner = useCallback((next: boolean) => {
+    setShowDesigner(next);
+    try {
+      localStorage.setItem(SHOW_DESIGNER_KEY, next ? "1" : "0");
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   const [sidingMaterial, setSidingMaterial] = useState<SidingMaterialId>("fiber-cement-hardie");
   const [sidingProfile, setSidingProfile] =
@@ -211,6 +233,26 @@ export function ExteriorDesigner() {
           single quote request—edit before you send.
         </p>
 
+        <div className="mt-6 flex flex-col gap-3 rounded-lg border border-base-black/10 bg-base-white/60 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <p id="exterior-designer-toggle-label" className="text-sm font-semibold text-base-black">
+              Show exterior designer
+            </p>
+            <p className="mt-0.5 text-xs text-base-black/55">
+              Turn off if you only need a quote for other work—use the contact form below and choose
+              &quot;Other services.&quot;
+            </p>
+          </div>
+          <Switch
+            id="exterior-designer-toggle"
+            checked={showDesigner}
+            onCheckedChange={persistShowDesigner}
+            aria-labelledby="exterior-designer-toggle-label"
+          />
+        </div>
+
+        {showDesigner ? (
+          <>
         <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-lg border border-base-black/10 bg-base-white/80 px-4 py-3 text-sm text-base-black/80">
           <input
             type="checkbox"
@@ -700,6 +742,18 @@ export function ExteriorDesigner() {
             />
           </div>
         </div>
+          </>
+        ) : (
+          <div className="mt-8 rounded-lg border border-base-black/10 bg-base-white/80 px-4 py-6 sm:px-6">
+            <p className="text-sm font-semibold text-base-black">Exterior designer is hidden</p>
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-base-black/70">
+              Requesting a quote for decks, roofing, renovations, or anything other than siding /
+              windows / doors? Use <strong className="text-base-black">Start Your Project</strong>{" "}
+              below, select <strong className="text-base-black">Other services</strong>, and describe
+              your project—no configuration package required.
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );
