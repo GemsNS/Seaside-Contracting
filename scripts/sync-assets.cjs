@@ -8,6 +8,7 @@ const path = require("path");
 const root = path.join(__dirname, "..");
 const pairs = [
   ["assets/logo1.png", "public/brand/logo-main.png"],
+  ["assets/headercrest1.png", "public/brand/header-crest.png"],
   ["assets/whitebanner1.png", "public/brand/logo-on-dark.png"],
   ["assets/footercrest1.png", "public/brand/footer-crest.png"],
   ["assets/vechicle promo.png", "public/brand/vehicle-promo.png"],

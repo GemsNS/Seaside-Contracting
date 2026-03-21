@@ -17,12 +17,12 @@ export function Footer() {
           <div className="lg:col-span-5">
             <div className="inline-block rounded-lg bg-white p-3 shadow-sm">
               <Image
-                src={withBasePath("/brand/footer-crest.png")}
+                src={withBasePath("/brand/logo-main.png")}
                 alt="Seaside Contracting"
-                width={260}
-                height={140}
+                width={360}
+                height={120}
                 unoptimized
-                className="h-auto w-[min(100%,260px)] object-contain object-left"
+                className="h-auto w-[min(100%,280px)] object-contain object-left sm:w-[min(100%,320px)]"
               />
             </div>
           </div>

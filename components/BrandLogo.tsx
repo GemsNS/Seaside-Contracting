@@ -4,28 +4,25 @@ import Image from "next/image";
 import { withBasePath } from "@/lib/withBasePath";
 
 /**
- * Raster wordmarks from `/public/brand/` (source: `assets/logo1.png`, `assets/whitebanner1.png`).
- * `onDark` = light treatment for transparent header over the hero; scrolled = full-color lockup.
+ * Compact nav mark from `assets/miniseal.png` → `public/brand/mini-seal.png`.
  */
 type BrandLogoProps = {
   className?: string;
-  /** Light / ice logo for dark photography & overlays */
-  onDark?: boolean;
 };
 
-export function BrandLogo({ className, onDark = false }: BrandLogoProps) {
-  const src = withBasePath(onDark ? "/brand/logo-on-dark.png" : "/brand/logo-main.png");
+export function BrandLogo({ className }: BrandLogoProps) {
+  const src = withBasePath("/brand/mini-seal.png");
 
   return (
     <Image
       src={src}
       alt="Seaside Contracting"
-      width={360}
-      height={120}
+      width={88}
+      height={88}
       priority
       unoptimized
-      className={`object-contain object-left ${className ?? ""}`}
-      sizes="(max-width: 640px) 200px, 240px"
+      className={`h-11 w-11 shrink-0 object-contain sm:h-12 sm:w-12 ${className ?? ""}`}
+      sizes="48px"
     />
   );
 }
