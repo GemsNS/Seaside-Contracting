@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
 import { Check, Info } from "lucide-react";
 import { HousePreview } from "@/components/exterior/HousePreview";
 import { Switch } from "@/components/ui/Switch";
@@ -717,15 +716,13 @@ export function ExteriorDesigner() {
               </div>
             ) : null}
 
-            <motion.button
+            <button
               type="button"
               onClick={applyToQuote}
-              className="w-full rounded-md bg-primary-aqua px-5 py-3.5 text-sm font-semibold text-base-white shadow-sm transition-opacity hover:opacity-90 sm:w-auto"
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
+              className="w-full rounded-md bg-primary-aqua px-5 py-3.5 text-sm font-semibold text-base-white shadow-sm transition-opacity hover:opacity-90 active:scale-[0.99] sm:w-auto"
             >
               Get a quote with these selections
-            </motion.button>
+            </button>
             <p className="text-xs text-base-black/50">
               Opens the contact form with a detailed summary. Edit before sending.
             </p>

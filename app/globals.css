@@ -10,6 +10,8 @@
   --base-black: #121212;
   --base-white: #ffffff;
   --neutral-offwhite: #f8f9fa;
+  /* Nova Scotia flag saltire blue — accents / regional touches */
+  --ns-saltire-blue: #00247d;
 }
 
 html {

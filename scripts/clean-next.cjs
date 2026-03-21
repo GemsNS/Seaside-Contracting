@@ -14,8 +14,13 @@ const rmOpts = {
   retryDelay: 200,
 };
 
-for (const dir of [".next", "next-dist"]) {
-  const target = path.join(root, dir);
+const extraDirs =
+  process.platform === "win32" && process.env.LOCALAPPDATA
+    ? [path.join(process.env.LOCALAPPDATA, "seaside-contracting-next")]
+    : [];
+
+for (const dir of [".next", "next-dist", ...extraDirs]) {
+  const target = path.isAbsolute(dir) ? dir : path.join(root, dir);
   try {
     if (fs.existsSync(target)) {
       fs.rmSync(target, rmOpts);

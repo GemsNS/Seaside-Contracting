@@ -1,10 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { ContactForm } from "@/components/ContactForm";
-
-const easeArchitectural = [0.22, 1, 0.36, 1] as const;
 
 export function Contact() {
   return (
@@ -15,13 +12,7 @@ export function Contact() {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto w-full max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.5, ease: easeArchitectural }}
-            className="text-center lg:text-left"
-          >
+          <div className="text-center lg:text-left">
             <h2
               id="contact-heading"
               className="text-3xl font-extrabold tracking-tight text-base-black sm:text-4xl"
@@ -34,28 +25,16 @@ export function Contact() {
               <strong className="font-semibold text-base-black">Other services</strong> for everything
               else. No configuration required for other work.
             </p>
-          </motion.div>
+          </div>
 
           <div className="mt-12 grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-x-16 lg:gap-y-12">
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.5, ease: easeArchitectural }}
-              className="min-w-0"
-            >
+            <div className="min-w-0">
               <div className="rounded-lg border border-base-black/8 bg-base-white p-6 shadow-sm sm:p-8">
                 <ContactForm />
               </div>
-            </motion.div>
+            </div>
 
-            <motion.aside
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.5, delay: 0.06, ease: easeArchitectural }}
-              className="min-w-0 lg:pt-1"
-            >
+            <aside className="min-w-0 lg:pt-1">
               <ul className="space-y-5 text-base text-base-black/85">
                 <li className="flex gap-3">
                   <Phone className="mt-0.5 h-5 w-5 shrink-0 text-primary-aqua" strokeWidth={2} aria-hidden />
@@ -74,7 +53,7 @@ export function Contact() {
                   <span>Halifax, Nova Scotia</span>
                 </li>
               </ul>
-            </motion.aside>
+            </aside>
           </div>
         </div>
       </div>

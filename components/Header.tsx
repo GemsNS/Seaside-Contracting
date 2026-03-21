@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { Menu, Phone, X } from "lucide-react";
 
 const nav = [
@@ -13,7 +12,6 @@ const nav = [
   { href: "#contact", label: "Contact" },
 ];
 
-/** Hero is light (no full-bleed photo) — transparent header uses dark ink, not white links */
 const HERO_IS_LIGHT = true;
 
 export function Header() {
@@ -32,22 +30,16 @@ export function Header() {
     ? "text-base-white/90 hover:text-primary-aqua"
     : "text-base-black/80 hover:text-primary-aqua";
 
+  const headerSurface =
+    scrolled
+      ? "border-transparent bg-[rgba(255,255,255,0.97)] shadow-[0_1px_0_rgba(18,18,18,0.06)]"
+      : HERO_IS_LIGHT
+        ? "border-base-black/5 bg-[rgba(255,255,255,0.86)] shadow-[0_1px_0_rgba(18,18,18,0.06)] backdrop-blur-md"
+        : "border-transparent bg-transparent shadow-none";
+
   return (
-    <motion.header
-      initial={false}
-      animate={{
-        backgroundColor: scrolled
-          ? "rgba(255,255,255,0.97)"
-          : HERO_IS_LIGHT
-            ? "rgba(255,255,255,0.86)"
-            : "rgba(18,18,18,0)",
-        boxShadow:
-          scrolled || HERO_IS_LIGHT ? "0 1px 0 rgba(18,18,18,0.06)" : "none",
-      }}
-      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] as const }}
-      className={`fixed inset-x-0 top-0 z-50 border-b ${
-        !scrolled && HERO_IS_LIGHT ? "border-base-black/5 backdrop-blur-md" : "border-transparent"
-      }`}
+    <header
+      className={`fixed inset-x-0 top-0 z-50 border-b transition-[background-color,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${headerSurface}`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
@@ -138,6 +130,6 @@ export function Header() {
           </nav>
         </div>
       ) : null}
-    </motion.header>
+    </header>
   );
 }

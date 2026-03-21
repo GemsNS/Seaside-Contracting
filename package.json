@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "clean": "node scripts/clean-next.cjs",
+    "junction": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/junction-next-cache.ps1",
     "dev": "next dev -p 3000",
     "dev:turbo": "next dev --turbopack -p 3000",
     "assets:sync": "node scripts/sync-assets.cjs",
@@ -12,7 +13,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "framer-motion": "^12.38.0",
     "lucide-react": "^0.577.0",
     "next": "15.4.10",
     "react": "^19.0.0",

@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
+import { MaritimeFooterBanner } from "@/components/maritime/MaritimeFooterBanner";
 import { withBasePath } from "@/lib/withBasePath";
+import { NovaScotiaFlag } from "@/components/NovaScotiaFlag";
 
 const quick = [
   { href: "/", label: "Home" },
@@ -11,11 +13,15 @@ const quick = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-white/10 bg-base-black text-base-white">
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+    <footer className="border-t border-white/10 bg-base-black text-base-white [box-shadow:inset_0_3px_0_0_var(--ns-saltire-blue)]">
+      <div className="mx-auto max-w-7xl px-4 pb-10 pt-8 sm:px-6 sm:pb-14 sm:pt-10 lg:px-8">
+        <div className="mb-10 sm:mb-12">
+          <MaritimeFooterBanner />
+        </div>
+
         <div className="flex flex-col gap-8 sm:gap-10 md:flex-row md:items-start md:justify-between md:gap-x-8 lg:gap-12">
-          {/* Logo card: w-fit so the white box hugs the image — no horizontal stretch */}
-          <div className="flex w-fit max-w-full shrink-0 justify-center self-start md:justify-start">
+          {/* Logo card: centered on mobile, left-aligned from md when in a row */}
+          <div className="flex w-fit max-w-full shrink-0 justify-center self-center md:self-start md:justify-start">
             <div className="w-fit max-w-full rounded-lg bg-white p-2.5 shadow-sm sm:p-3">
               <Image
                 src={withBasePath("/brand/logo-main.png")}
@@ -58,7 +64,13 @@ export function Footer() {
                   info@seasidecontracting.ca
                 </a>
               </li>
-              <li>Halifax, Nova Scotia</li>
+              <li className="flex items-start gap-2.5">
+                <NovaScotiaFlag
+                  size={22}
+                  className="mt-0.5 shrink-0 rounded-sm shadow-sm ring-1 ring-white/15"
+                />
+                <span>Halifax, Nova Scotia</span>
+              </li>
             </ul>
           </div>
         </div>
@@ -79,6 +91,7 @@ export function Footer() {
             </span>
             <span className="text-[11px] text-base-white/30">Internal use — not in main menu</span>
           </p>
+          <p className="mt-4 text-[11px] text-base-white/40">made by: joel</p>
         </div>
       </div>
     </footer>

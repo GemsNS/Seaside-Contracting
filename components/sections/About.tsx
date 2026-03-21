@@ -1,9 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
-
-const easeArchitectural = [0.22, 1, 0.36, 1] as const;
-
 function CoastalWaves() {
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 overflow-hidden" aria-hidden>
@@ -40,13 +34,7 @@ export function About() {
       aria-labelledby="about-heading"
     >
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.55, ease: easeArchitectural }}
-          className="max-w-3xl"
-        >
+        <div className="max-w-3xl">
           <h2
             id="about-heading"
             className="text-3xl font-extrabold tracking-tight text-base-black sm:text-4xl"
@@ -60,7 +48,7 @@ export function About() {
             project. We don&apos;t just build homes; we engineer living spaces designed to thrive in
             the coastal environment.
           </p>
-        </motion.div>
+        </div>
       </div>
 
       <CoastalWaves />

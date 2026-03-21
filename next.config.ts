@@ -8,9 +8,9 @@ const staticExport = process.env.STATIC_EXPORT === "true";
 const basePath = process.env.BASE_PATH?.trim() || "";
 
 /**
- * Use the default output directory (`.next`). A custom `distDir` (e.g. `next-dist`) can leave
- * half-written caches on synced drives and trigger ENOENT on `routes-manifest.json`. If OneDrive
- * locks `.next/trace`, pause sync for this folder or run `npm run clean` then `npm run dev`.
+ * Keep the default `distDir` (`.next`) **inside the project**. Moving the build output to
+ * `%LOCALAPPDATA%` breaks server resolution of `react/jsx-runtime` from `node_modules`.
+ * If OneDrive locks `.next/trace`, use a directory junction — see `docs/windows-onedrive.md`.
  *
  * GitHub Pages: set `STATIC_EXPORT=true` (see `.github/workflows/deploy-github-pages.yml`).
  * Static export cannot include API routes; the workflow removes `app/api` before building.
