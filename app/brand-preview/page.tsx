@@ -52,7 +52,7 @@ export default function BrandPreviewPage() {
           </p>
           <div className="mt-6 max-w-3xl rounded-xl border border-base-black/8 bg-base-white p-4 shadow-sm sm:p-6">
             <Image
-              src="/brand/vehicle-promo.png"
+              src={withBasePath("/brand/vehicle-promo.png")}
               alt="Seaside Contracting vehicle wrap concepts — pickup and cargo van"
               width={1600}
               height={1200}
