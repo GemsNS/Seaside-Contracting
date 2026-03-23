@@ -1,8 +1,6 @@
 import Image from "next/image";
 import { Reveal } from "@/components/motion/Reveal";
-
-const ABOUT_IMAGE =
-  "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1600&q=80";
+import { withBasePath } from "@/lib/withBasePath";
 
 export function About() {
   return (
@@ -14,15 +12,18 @@ export function About() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
           <Reveal y={24}>
-            <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-zinc-100 shadow-lg ring-1 ring-zinc-200/80 lg:aspect-[5/4]">
+            <figure className="relative aspect-[4/3] overflow-hidden rounded-sm bg-white shadow-lg ring-1 ring-zinc-200/80 lg:aspect-[5/4]">
               <Image
-                src={ABOUT_IMAGE}
-                alt="Residential interior with natural light"
+                src={withBasePath("/brand/ns-flag-full.svg")}
+                alt="Nova Scotia provincial flag — white field with blue saltire and shield"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover"
+                className="object-contain object-center p-6 sm:p-10 lg:p-12"
+                unoptimized
+                priority
               />
-            </div>
+              <figcaption className="sr-only">Nova Scotia</figcaption>
+            </figure>
           </Reveal>
 
           <div>

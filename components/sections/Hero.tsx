@@ -1,18 +1,29 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
+import { HalifaxSkylineBackdrop } from "@/components/HalifaxSkylineBackdrop";
 import { easeArchitectural } from "@/components/motion/easing";
+import { useHalifaxAmbient } from "@/hooks/useHalifaxAmbient";
 import { usePrefersReducedMotion } from "@/components/motion/usePrefersReducedMotion";
-
-const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2400&q=80";
 
 const stagger = 0.08;
 
+/**
+ * Hero — animated Halifax harbour skyline, sky, and water driven by local time + Open-Meteo.
+ */
 export function Hero() {
   const reduce = usePrefersReducedMotion();
+  const {
+    timeLabel,
+    tempC,
+    weatherLabelText,
+    palette,
+    loading,
+    weatherError,
+    ambience,
+    weatherMood,
+  } = useHalifaxAmbient();
 
   const item = reduce
     ? {
@@ -28,23 +39,21 @@ export function Hero() {
         },
       };
 
+  const statusLine = [
+    "Halifax",
+    timeLabel,
+    tempC !== null ? `${tempC}°C` : loading ? "…" : "—",
+    weatherError ? "Weather unavailable" : weatherLabelText,
+  ].join(" · ");
+
   return (
-    <section className="relative min-h-[100dvh] overflow-hidden bg-zinc-900">
-      <div className="absolute inset-0">
-        <Image
-          src={HERO_IMAGE}
-          alt="Modern coastal residential architecture"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center"
-        />
-        <div
-          className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/35"
-          aria-hidden
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/25 to-transparent sm:from-black/60" aria-hidden />
-      </div>
+    <section className="relative min-h-[100dvh] overflow-hidden bg-[#050a0e]">
+      <HalifaxSkylineBackdrop
+        palette={palette}
+        ambience={ambience}
+        weatherMood={weatherMood}
+        reduce={reduce}
+      />
 
       <div className="relative z-10 flex min-h-[100dvh] flex-col justify-end px-4 pb-16 pt-28 sm:px-6 sm:pb-20 sm:pt-32 lg:px-8 lg:pb-24">
         <div className="mx-auto w-full max-w-7xl">
@@ -66,9 +75,16 @@ export function Hero() {
             >
               Halifax &amp; coastal Nova Scotia
             </motion.p>
+            <motion.p
+              variants={item}
+              className="mt-2 max-w-2xl text-[13px] leading-snug text-white/70 sm:text-sm"
+              aria-live="polite"
+            >
+              {statusLine}
+            </motion.p>
             <motion.h1
               variants={item}
-              className="mt-4 text-display font-bold text-white drop-shadow-sm"
+              className="mt-4 text-display font-bold text-white drop-shadow-[0_2px_24px_rgba(0,0,0,0.35)]"
             >
               Precision in every build.
             </motion.h1>
@@ -86,7 +102,7 @@ export function Hero() {
             >
               <Link
                 href="/#exterior-design"
-                className="inline-flex items-center justify-center rounded-sm bg-primary-aqua px-7 py-3.5 text-base font-semibold text-white shadow-lg shadow-black/20 transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-xl"
+                className="inline-flex items-center justify-center rounded-sm bg-primary-aqua px-7 py-3.5 text-base font-semibold text-white shadow-lg shadow-black/25 transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-xl"
               >
                 Exterior designer
               </Link>

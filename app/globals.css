@@ -30,3 +30,170 @@ body {
 .surface-white {
   @apply bg-white;
 }
+
+/* Homepage hero — animated backdrop (no stock photography) */
+.hero-animated-base {
+  background: linear-gradient(
+    135deg,
+    #050a0e 0%,
+    #0a1a24 18%,
+    #0c2433 35%,
+    #08202c 52%,
+    #06121a 70%,
+    #04080c 100%
+  );
+  background-size: 280% 280%;
+  animation: hero-gradient-drift 22s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-animated-base {
+    animation: none;
+    background-size: 100% 100%;
+  }
+
+  .hero-orb-drift,
+  .hero-wave-layer {
+    animation: none !important;
+  }
+
+  .hero-cloud-a,
+  .hero-cloud-b,
+  .hero-rain-layer,
+  .hero-snow-flake,
+  .hero-star-dot,
+  .hero-window-flicker {
+    animation: none !important;
+  }
+}
+
+@keyframes hero-gradient-drift {
+  0% {
+    background-position: 0% 20%;
+  }
+  100% {
+    background-position: 100% 80%;
+  }
+}
+
+@keyframes hero-orb-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1) translate(0, 0);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.06) translate(2%, -1%);
+  }
+}
+
+.hero-orb-drift {
+  animation: hero-orb-pulse 14s ease-in-out infinite;
+}
+
+.hero-orb-drift-delayed {
+  animation: hero-orb-pulse 18s ease-in-out infinite;
+  animation-delay: -6s;
+}
+
+@keyframes hero-wave-shift {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-24px);
+  }
+}
+
+.hero-wave-layer {
+  animation: hero-wave-shift 12s ease-in-out infinite alternate;
+}
+
+/* Halifax skyline backdrop */
+.hero-cloud-a {
+  animation: hero-cloud-drift-a 88s linear infinite;
+}
+
+.hero-cloud-b {
+  animation: hero-cloud-drift-b 118s linear infinite reverse;
+}
+
+@keyframes hero-cloud-drift-a {
+  from {
+    transform: translateX(-5%);
+  }
+  to {
+    transform: translateX(5%);
+  }
+}
+
+@keyframes hero-cloud-drift-b {
+  from {
+    transform: translateX(4%);
+  }
+  to {
+    transform: translateX(-6%);
+  }
+}
+
+.hero-starfield .hero-star-dot {
+  animation: hero-star-twinkle 2.8s ease-in-out infinite alternate;
+}
+
+@keyframes hero-star-twinkle {
+  0% {
+    opacity: 0.25;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.hero-rain-layer {
+  animation: hero-rain-fall 16s linear infinite;
+}
+
+@keyframes hero-rain-fall {
+  from {
+    transform: translateY(-32px);
+  }
+  to {
+    transform: translateY(32px);
+  }
+}
+
+.hero-snow-flake {
+  animation: hero-snow-drift 10s ease-in-out infinite alternate;
+}
+
+@keyframes hero-snow-drift {
+  0% {
+    opacity: 0.35;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-water-shimmer {
+  from {
+    opacity: 0.22;
+  }
+  to {
+    opacity: 0.48;
+  }
+}
+
+.hero-window-flicker {
+  animation: hero-window-flicker 5s ease-in-out infinite alternate;
+}
+
+@keyframes hero-window-flicker {
+  0% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 1;
+  }
+}

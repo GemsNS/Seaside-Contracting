@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { withBasePath } from "@/lib/withBasePath";
 import Link from "next/link";
 import { NovaScotiaFlag } from "@/components/NovaScotiaFlag";
 
@@ -17,7 +18,7 @@ export function Footer() {
           <div className="lg:col-span-5">
             <Link href="/" className="inline-block">
               <Image
-                src="/brand/newlogodark.png"
+                src={withBasePath("/brand/newlogodark.png")}
                 alt="Seaside Contracting"
                 width={320}
                 height={100}

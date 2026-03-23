@@ -12,6 +12,7 @@ import {
   Youtube,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { withBasePath } from "@/lib/withBasePath";
 import "./showcase.css";
 
 /** External placeholder photos (picsum — stable seeds; swap for real assets later). */
@@ -101,7 +102,7 @@ export function ShowcaseClient() {
       >
         <Link href="/" className="flex min-w-0 items-center gap-3">
           <Image
-            src="/brand/newlogolight.png"
+            src={withBasePath("/brand/newlogolight.png")}
             alt="Seaside Contracting"
             width={200}
             height={56}
@@ -474,7 +475,7 @@ export function ShowcaseClient() {
           <div className="space-y-8 md:col-span-2">
             <Link href="/" className="inline-flex items-center gap-3">
               <Image
-                src="/brand/newlogolight.png"
+                src={withBasePath("/brand/newlogolight.png")}
                 alt="Seaside Contracting"
                 width={280}
                 height={80}

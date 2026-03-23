@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu, Phone, X } from "lucide-react";
+import { withBasePath } from "@/lib/withBasePath";
 const nav = [
   { href: "/", label: "Home" },
   { href: "/showcase", label: "Showcase" },
@@ -56,7 +57,7 @@ export function Header() {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8 lg:py-4">
         <Link href="/" className="flex min-w-0 items-center gap-3">
           <Image
-            src="/brand/newlogolight.png"
+            src={withBasePath("/brand/newlogolight.png")}
             alt="Seaside Contracting"
             width={200}
             height={56}
