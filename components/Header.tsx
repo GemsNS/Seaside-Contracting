@@ -1,89 +1,94 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu, Phone, X } from "lucide-react";
-
 const nav = [
   { href: "/", label: "Home" },
-  { href: "#exterior-design", label: "Designer" },
-  { href: "#services", label: "Services" },
-  { href: "#about", label: "About Us" },
-  { href: "#contact", label: "Contact" },
+  { href: "/showcase", label: "Showcase" },
+  { href: "/#exterior-design", label: "Designer" },
+  { href: "/#services", label: "Services" },
+  { href: "/#about", label: "About" },
+  { href: "/#contact", label: "Contact" },
 ];
 
-const HERO_IS_LIGHT = true;
-
 export function Header() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => setScrolled(window.scrollY > 16);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const onDark = !scrolled && !HERO_IS_LIGHT;
-  const linkClass = onDark
-    ? "text-base-white/90 hover:text-primary-aqua"
-    : "text-base-black/80 hover:text-primary-aqua";
+  const transparent = isHome && !scrolled;
 
-  const headerSurface =
-    scrolled
-      ? "border-transparent bg-[rgba(255,255,255,0.97)] shadow-[0_1px_0_rgba(18,18,18,0.06)]"
-      : HERO_IS_LIGHT
-        ? "border-base-black/5 bg-[rgba(255,255,255,0.86)] shadow-[0_1px_0_rgba(18,18,18,0.06)] backdrop-blur-md"
-        : "border-transparent bg-transparent shadow-none";
+  const navLinkClass = transparent
+    ? "text-white/95 hover:text-primary-aqua"
+    : "text-white/90 hover:text-primary-aqua";
+
+  const headerShell = transparent
+    ? "border-transparent bg-transparent"
+    : "border-zinc-800/80 bg-zinc-950/98 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.5)] backdrop-blur-sm";
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 border-b transition-[background-color,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${headerSurface}`}
+      className={`fixed inset-x-0 top-0 z-50 border-b transition-[background-color,box-shadow,border-color] duration-300 ease-out ${headerShell}`}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-          <Link
-            href="/"
-            className={`min-w-0 shrink-0 font-semibold uppercase tracking-wide transition-colors text-xs sm:text-sm ${linkClass}`}
-          >
-            Seaside Contracting
-          </Link>
-          <span
-            className={`hidden h-8 w-px shrink-0 md:block ${onDark ? "bg-base-white/25" : "bg-base-black/15"}`}
-            aria-hidden
-          />
+      <div
+        className={`hidden sm:block ${transparent ? "bg-black/35 text-white/95" : "bg-zinc-900 text-white/95"}`}
+      >
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2 text-xs font-medium sm:px-6 lg:px-8">
+          <span className="tracking-wide">Halifax &amp; coastal Nova Scotia</span>
+          <a href="tel:+19028099412" className="inline-flex items-center gap-2 transition-colors hover:text-primary-aqua">
+            <Phone className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+            (902) 809-9412
+          </a>
         </div>
+      </div>
 
-        <nav
-          className={`hidden items-center gap-8 text-sm font-semibold uppercase tracking-wide md:flex ${linkClass}`}
-        >
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8 lg:py-4">
+        <Link href="/" className="flex min-w-0 items-center gap-3">
+          <Image
+            src="/brand/newlogolight.png"
+            alt="Seaside Contracting"
+            width={200}
+            height={56}
+            className="h-10 w-auto max-w-[180px] object-contain object-left sm:h-11"
+            priority
+            unoptimized
+          />
+        </Link>
+
+        <nav className="hidden items-center gap-8 text-sm font-medium lg:flex" aria-label="Primary">
           {nav.map((item) => (
-            <Link key={item.href} href={item.href} className="transition-colors">
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`transition-colors duration-200 ${navLinkClass}`}
+            >
               {item.label}
             </Link>
           ))}
         </nav>
 
         <div className="flex items-center gap-3 sm:gap-4">
-          <a
-            href="tel:+19028099412"
-            className={`hidden items-center gap-2 text-sm font-semibold lg:flex ${onDark ? "text-base-white" : "text-base-black"}`}
-          >
-            <Phone className="h-4 w-4 text-primary-aqua" strokeWidth={2} aria-hidden />
-            <span>(902) 809-9412</span>
-          </a>
-
           <Link
-            href="#contact"
-            className="hidden rounded-md bg-primary-aqua px-4 py-2.5 text-sm font-semibold text-base-white shadow-sm transition-opacity hover:opacity-90 sm:inline-flex"
+            href="/#contact"
+            className="hidden rounded-sm bg-primary-aqua px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-92 sm:inline-flex"
           >
-            Get a Quote
+            Get a quote
           </Link>
 
           <button
             type="button"
-            className={`inline-flex rounded-md p-2 md:hidden ${onDark ? "text-base-white" : "text-base-black"}`}
+            className="inline-flex rounded-sm p-2 text-white lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-nav"
             onClick={() => setOpen((v) => !v)}
@@ -97,33 +102,27 @@ export function Header() {
       {open ? (
         <div
           id="mobile-nav"
-          className={`border-t px-4 py-4 md:hidden ${
-            scrolled || HERO_IS_LIGHT
-              ? "border-base-black/10 bg-base-white"
-              : "border-base-white/10 bg-base-black/90 backdrop-blur-md"
-          }`}
+          className="border-t border-zinc-200 bg-white px-4 py-4 shadow-inner lg:hidden"
         >
-          <nav
-            className={`flex flex-col gap-3 text-sm font-semibold uppercase tracking-wide ${onDark && !scrolled ? "text-base-white" : "text-base-black"}`}
-          >
+          <nav className="flex flex-col gap-1 text-sm font-medium text-zinc-800">
             {nav.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className="py-1"
+                className="rounded-sm px-2 py-2.5 hover:bg-zinc-50"
               >
                 {item.label}
               </Link>
             ))}
             <Link
-              href="#contact"
-              className="mt-2 rounded-md bg-primary-aqua px-4 py-3 text-center text-base-white"
+              href="/#contact"
+              className="mt-2 rounded-sm bg-primary-aqua px-4 py-3 text-center font-semibold text-white"
               onClick={() => setOpen(false)}
             >
-              Get a Quote
+              Get a quote
             </Link>
-            <a href="tel:+19028099412" className="flex items-center gap-2 py-2 text-primary-aqua">
+            <a href="tel:+19028099412" className="flex items-center gap-2 px-2 py-2 text-primary-aqua">
               <Phone className="h-4 w-4" />
               (902) 809-9412
             </a>

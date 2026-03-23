@@ -19,5 +19,14 @@ html {
 }
 
 body {
-  @apply bg-base-white text-base-black antialiased;
+  @apply bg-base-white text-zinc-800 antialiased;
+}
+
+/* Corporate banding: subtle section rhythm (PCL-style alternation) */
+.surface-muted {
+  @apply bg-zinc-50;
+}
+
+.surface-white {
+  @apply bg-white;
 }

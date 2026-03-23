@@ -1,47 +1,44 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MaritimeFooterBanner } from "@/components/maritime/MaritimeFooterBanner";
-import { withBasePath } from "@/lib/withBasePath";
 import { NovaScotiaFlag } from "@/components/NovaScotiaFlag";
 
 const quick = [
   { href: "/", label: "Home" },
-  { href: "#services", label: "Services" },
-  { href: "#about", label: "About Us" },
-  { href: "#contact", label: "Contact" },
+  { href: "/#services", label: "Services" },
+  { href: "/#about", label: "About" },
+  { href: "/#contact", label: "Contact" },
 ];
 
 export function Footer() {
   return (
-    <footer className="border-t border-white/10 bg-base-black text-base-white [box-shadow:inset_0_3px_0_0_var(--ns-saltire-blue)]">
-      <div className="mx-auto max-w-7xl px-4 pb-10 pt-8 sm:px-6 sm:pb-14 sm:pt-10 lg:px-8">
-        <div className="mb-10 sm:mb-12">
-          <MaritimeFooterBanner />
-        </div>
-
-        <div className="flex flex-col gap-8 sm:gap-10 md:flex-row md:items-start md:justify-between md:gap-x-8 lg:gap-12">
-          {/* Logo card: centered on mobile, left-aligned from md when in a row */}
-          <div className="flex w-fit max-w-full shrink-0 justify-center self-center md:self-start md:justify-start">
-            <div className="w-fit max-w-full rounded-lg bg-white p-2.5 shadow-sm sm:p-3">
+    <footer className="border-t-4 border-primary-aqua bg-zinc-950 text-zinc-200">
+      <div className="mx-auto max-w-7xl px-4 pb-12 pt-12 sm:px-6 sm:pb-16 sm:pt-14 lg:px-8">
+        <div className="grid gap-12 border-b border-white/10 pb-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-10 lg:pb-14">
+          <div className="lg:col-span-5">
+            <Link href="/" className="inline-block">
               <Image
-                src={withBasePath("/brand/logo-main.png")}
+                src="/brand/newlogodark.png"
                 alt="Seaside Contracting"
-                width={360}
-                height={120}
+                width={320}
+                height={100}
                 unoptimized
-                className="h-auto w-auto max-w-[220px] object-contain object-left sm:max-w-[240px] md:max-w-[260px] lg:max-w-[280px]"
+                className="h-auto w-auto max-w-[260px] object-contain object-left sm:max-w-[280px]"
               />
-            </div>
+            </Link>
+            <p className="mt-6 max-w-md text-sm leading-relaxed text-zinc-400">
+              Full-service residential construction for Halifax and coastal Nova Scotia—delivered with
+              the accountability and craft you expect from a trusted partner.
+            </p>
           </div>
 
-          <nav className="shrink-0 text-left" aria-label="Footer">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-aqua">
+          <nav className="lg:col-span-3" aria-label="Footer">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary-aqua">
               Navigate
             </p>
-            <ul className="mt-3 space-y-2 text-sm font-semibold sm:mt-4">
+            <ul className="mt-4 space-y-2.5 text-sm font-medium">
               {quick.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="text-base-white/85 hover:text-primary-aqua">
+                  <Link href={item.href} className="text-zinc-300 transition-colors hover:text-white">
                     {item.label}
                   </Link>
                 </li>
@@ -49,13 +46,13 @@ export function Footer() {
             </ul>
           </nav>
 
-          <div className="min-w-0 shrink-0 text-left md:text-right">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-aqua">
+          <div className="lg:col-span-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary-aqua">
               Contact
             </p>
-            <ul className="mt-3 space-y-2.5 text-sm text-base-white/85 sm:mt-4 sm:space-y-3">
+            <ul className="mt-4 space-y-3 text-sm">
               <li>
-                <a href="tel:+19028099412" className="font-semibold hover:text-primary-aqua">
+                <a href="tel:+19028099412" className="font-semibold text-white hover:text-primary-aqua">
                   (902) 809-9412
                 </a>
               </li>
@@ -64,7 +61,7 @@ export function Footer() {
                   info@seasidecontracting.ca
                 </a>
               </li>
-              <li className="flex items-start gap-2.5">
+              <li className="flex items-start gap-2.5 pt-1">
                 <NovaScotiaFlag
                   size={22}
                   className="mt-0.5 shrink-0 rounded-sm shadow-sm ring-1 ring-white/15"
@@ -75,23 +72,21 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 border-t border-white/10 pt-6 sm:mt-12 sm:pt-8">
-          <p className="text-xs text-base-white/55">
-            © 2026 Seaside Contracting. All rights reserved.
-          </p>
-          <p className="mt-3">
+        <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-zinc-500">© {new Date().getFullYear()} Seaside Contracting. All rights reserved.</p>
+          <p className="text-xs text-zinc-600">
             <Link
               href="/brand-preview"
-              className="text-[11px] text-base-white/35 underline-offset-2 transition-colors hover:text-primary-aqua/90 hover:underline"
+              className="underline-offset-2 transition-colors hover:text-primary-aqua hover:underline"
             >
               Brand &amp; fleet reference
             </Link>
-            <span className="mx-2 text-base-white/25" aria-hidden>
+            <span className="mx-2 text-zinc-700" aria-hidden>
               ·
             </span>
-            <span className="text-[11px] text-base-white/30">Internal use — not in main menu</span>
+            <span className="text-zinc-600">Internal use</span>
           </p>
-          <p className="mt-4 text-[11px] text-base-white/40">made by: joel</p>
+          <p className="mt-3 text-[11px] text-zinc-700">made by: joel</p>
         </div>
       </div>
     </footer>

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Check, Info } from "lucide-react";
+import { Reveal } from "@/components/motion/Reveal";
 import { HousePreview } from "@/components/exterior/HousePreview";
 import { Switch } from "@/components/ui/Switch";
 import {
@@ -213,26 +214,28 @@ export function ExteriorDesigner() {
   return (
     <section
       id="exterior-design"
-      className="scroll-mt-24 border-t border-base-black/5 bg-neutral-offwhite pt-6 pb-14 sm:pt-8 sm:pb-16"
+      className="scroll-mt-32 border-t border-zinc-200/80 bg-white pt-10 pb-16 sm:scroll-mt-36 sm:pt-12 sm:pb-20"
       aria-labelledby="exterior-design-heading"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-aqua">
-          Interactive configurator
-        </p>
-        <h2
-          id="exterior-design-heading"
-          className="mt-2 text-3xl font-extrabold tracking-tight text-base-black sm:text-4xl"
-        >
-          Design your exterior
-        </h2>
-        <p className="mt-3 max-w-3xl text-sm leading-relaxed text-base-black/70">
-          Configure <strong>siding</strong>, <strong>windows</strong>, and <strong>doors</strong> with
-          spec-level options informed by coastal build practice. Your selections compile into a
-          single quote request—edit before you send.
-        </p>
+        <Reveal y={22}>
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-primary-aqua">
+            Interactive configurator
+          </p>
+          <h2
+            id="exterior-design-heading"
+            className="mt-4 text-3xl font-bold tracking-tight text-base-black sm:text-4xl lg:text-[2.35rem] lg:leading-snug"
+          >
+            Design your exterior
+          </h2>
+          <p className="mt-4 max-w-3xl text-base leading-relaxed text-zinc-600 sm:text-lg">
+            Configure <strong>siding</strong>, <strong>windows</strong>, and <strong>doors</strong> with
+            spec-level options informed by coastal build practice. Your selections compile into a
+            single quote request—edit before you send.
+          </p>
+        </Reveal>
 
-        <div className="mt-6 flex flex-col gap-3 rounded-lg border border-base-black/10 bg-base-white/60 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-8 flex flex-col gap-3 rounded-sm border border-zinc-200 bg-zinc-50/90 px-4 py-4 transition-shadow duration-300 hover:shadow-sm sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <p id="exterior-designer-toggle-label" className="text-sm font-semibold text-base-black">
               Show exterior designer

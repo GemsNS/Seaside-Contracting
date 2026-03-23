@@ -1,5 +1,6 @@
 /**
- * Remove Next.js build output. Use when you see ENOENT on routes-manifest.json,
+ * Remove Next.js build output. Use when you see ENOENT on prerender-manifest.json,
+ * routes-manifest.json,
  * EPERM on trace, or other cache corruption (common on OneDrive-synced folders).
  */
 const fs = require("fs");

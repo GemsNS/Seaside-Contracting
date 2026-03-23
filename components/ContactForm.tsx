@@ -137,7 +137,7 @@ export function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-      <fieldset className="space-y-3 rounded-lg border border-base-black/10 bg-base-white/50 px-3 py-3 sm:px-4">
+      <fieldset className="space-y-3 rounded-sm border border-zinc-200 bg-white px-3 py-3 sm:px-4">
         <legend className="px-1 text-sm font-semibold text-base-black">
           What kind of quote do you need?
         </legend>
@@ -187,7 +187,7 @@ export function ContactForm() {
           type="text"
           autoComplete="name"
           maxLength={LIMITS.name}
-          className="mt-2 w-full rounded-md border border-base-black/15 bg-base-white px-3 py-2.5 text-sm text-base-black outline-none ring-primary-aqua/30 transition-shadow focus:border-primary-aqua focus:ring-2"
+          className="mt-2 w-full rounded-sm border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 outline-none ring-primary-aqua/25 transition-shadow focus:border-primary-aqua focus:ring-2"
         />
       </div>
       <div>
@@ -201,7 +201,7 @@ export function ContactForm() {
           autoComplete="email"
           inputMode="email"
           maxLength={LIMITS.email}
-          className="mt-2 w-full rounded-md border border-base-black/15 bg-base-white px-3 py-2.5 text-sm text-base-black outline-none ring-primary-aqua/30 transition-shadow focus:border-primary-aqua focus:ring-2"
+          className="mt-2 w-full rounded-sm border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 outline-none ring-primary-aqua/25 transition-shadow focus:border-primary-aqua focus:ring-2"
         />
       </div>
       <div>
@@ -214,7 +214,7 @@ export function ContactForm() {
           type="tel"
           autoComplete="tel"
           maxLength={LIMITS.phone}
-          className="mt-2 w-full rounded-md border border-base-black/15 bg-base-white px-3 py-2.5 text-sm text-base-black outline-none ring-primary-aqua/30 transition-shadow focus:border-primary-aqua focus:ring-2"
+          className="mt-2 w-full rounded-sm border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 outline-none ring-primary-aqua/25 transition-shadow focus:border-primary-aqua focus:ring-2"
         />
       </div>
       <div>
@@ -233,7 +233,7 @@ export function ContactForm() {
               ? "Tell us about your project, timeline, and location…"
               : "Describe the work you need (e.g. deck build, roof replacement, renovation scope), timeline, and location…"
           }
-          className="mt-2 w-full resize-y rounded-md border border-base-black/15 bg-base-white px-3 py-2.5 text-sm text-base-black outline-none ring-primary-aqua/30 transition-shadow focus:border-primary-aqua focus:ring-2"
+          className="mt-2 w-full resize-y rounded-sm border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 outline-none ring-primary-aqua/25 transition-shadow focus:border-primary-aqua focus:ring-2"
         />
       </div>
 
@@ -251,7 +251,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={status === "loading"}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary-aqua px-5 py-3 text-sm font-semibold text-base-white shadow-sm transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+        className="inline-flex w-full items-center justify-center gap-2 rounded-sm bg-primary-aqua px-6 py-3 text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-92 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
       >
         {status === "loading" ? (
           <>
