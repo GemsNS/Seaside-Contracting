@@ -23,10 +23,11 @@ export function getHalifaxHour(d: Date): number {
     timeZone: HALIFAX_TZ,
     hour: "numeric",
     hour12: false,
+    hourCycle: "h23",
   })
     .formatToParts(d)
     .find((p) => p.type === "hour")?.value;
-  return h ? parseInt(h, 10) : 12;
+  return h !== undefined ? parseInt(h, 10) : 12;
 }
 
 /** Visual bucket from Halifax local hour (approximate sun times vary by season). */
@@ -128,23 +129,23 @@ export type HeroPalette = {
   reflectionOpacity: number;
 };
 
-function pickCelestial(
-  ambience: Ambience,
-  apiIsDay: number | null,
-): CelestialBody {
-  if (apiIsDay === 0) {
-    if (ambience === "dawn") return "sun";
+/** True when Halifax local hour bucket is night / late twilight (moon + stars). */
+function isNightAmbience(ambience: Ambience): boolean {
+  return ambience === "night" || ambience === "evening";
+}
+
+/**
+ * Sun vs moon follows Halifax local time (ambience). Open-Meteo `is_day` can disagree
+ * with civil time near dawn/dusk or due to API quirks — local hour is authoritative.
+ */
+function pickCelestial(ambience: Ambience, apiIsDay: number | null): CelestialBody {
+  if (ambience === "dawn" || ambience === "day" || ambience === "dusk") {
+    return "sun";
+  }
+  if (ambience === "night" || ambience === "evening") {
+    if (apiIsDay === 1) return "sun";
     return "moon";
   }
-  if (apiIsDay === 1) {
-    if (ambience === "night") return "moon";
-    if (ambience === "dawn" || ambience === "day" || ambience === "dusk")
-      return "sun";
-    return "sun";
-  }
-  if (ambience === "night" || ambience === "evening") return "moon";
-  if (ambience === "dawn" || ambience === "day" || ambience === "dusk")
-    return "sun";
   return "none";
 }
 
@@ -153,7 +154,6 @@ export function buildHeroPalette(
   mood: WeatherMood,
   apiIsDay: number | null,
 ): HeroPalette {
-  const isDay = apiIsDay === 1;
   const rain = mood === "rain" || mood === "storm";
   const storm = mood === "storm";
   const snow = mood === "snow";
@@ -192,7 +192,7 @@ export function buildHeroPalette(
     waveOpacity = 0.32;
   }
 
-  if (!isDay && apiIsDay !== null) {
+  if (isNightAmbience(ambience)) {
     vignetteBottom = "rgba(0,0,0,0.72)";
     topGlow = "rgba(30, 60, 120, 0.08)";
     waveOpacity *= 0.75;
@@ -246,10 +246,7 @@ export function buildHeroPalette(
     skylineSilhouette = "rgba(18, 24, 30, 0.88)";
   }
 
-  const nightLike =
-    ambience === "night" ||
-    ambience === "evening" ||
-    (!isDay && apiIsDay !== null);
+  const nightLike = isNightAmbience(ambience);
   if (nightLike) {
     windowGlowOpacity = ambience === "night" ? 0.52 : 0.36;
     starOpacity =
