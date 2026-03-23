@@ -12,8 +12,12 @@ import {
   Youtube,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { withBasePath } from "@/lib/withBasePath";
 import "./showcase.css";
+
+/** External placeholder photos (picsum — stable seeds; swap for real assets later). */
+const PLACEHOLDER_TEAM = "https://picsum.photos/seed/seaside-team/800/1000";
+const PLACEHOLDER_NEWS_1 = "https://picsum.photos/seed/seaside-news-1/1200/675";
+const PLACEHOLDER_NEWS_3 = "https://picsum.photos/seed/seaside-news-3/1200/675";
 
 /** Stable Unsplash URLs (next/image needs relative parent for `fill`; see hero markup). */
 const SLIDES = [
@@ -386,14 +390,13 @@ export function ShowcaseClient() {
           <div className="showcase-reveal relative" style={{ transitionDelay: "300ms" }}>
             <div className="absolute right-0 top-0 h-full w-32 bg-[var(--sea-accent)]/10 showcase-clip-wing-tr" />
             <div className="relative aspect-[4/5] w-full overflow-hidden showcase-owner-mask">
-              {/* Use <img> for SVG — next/image blocks SVGs unless dangerouslyAllowSVG; <img> + withBasePath works on GitHub Pages. */}
-              <img
-                src={withBasePath("/showcase/placeholder-team.svg")}
+              <Image
+                src={PLACEHOLDER_TEAM}
                 alt="Construction professionals at work"
-                className="absolute inset-0 h-full w-full object-cover transition-transform duration-1000 hover:scale-105"
-                width={800}
-                height={1000}
-                decoding="async"
+                fill
+                className="object-cover transition-transform duration-1000 hover:scale-105"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                unoptimized
               />
             </div>
             <div className="absolute -right-8 bottom-20 h-32 w-32 bg-[var(--sea-accent)] showcase-clip-wing-tr [transform:translateX(0)]" />
@@ -416,7 +419,7 @@ export function ShowcaseClient() {
         <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
           {[
             {
-              img: "/showcase/placeholder-card-1.svg",
+              img: PLACEHOLDER_NEWS_1,
               tag: "Projects",
               title: "Coastal renos: what we prioritize before the first nail",
               meta: "Residential | Nova Scotia",
@@ -428,7 +431,7 @@ export function ShowcaseClient() {
               meta: "Exterior package | HRM",
             },
             {
-              img: "/showcase/placeholder-card-2.svg",
+              img: PLACEHOLDER_NEWS_3,
               tag: "Craft",
               title: "Finish carpentry that survives seasonal movement",
               meta: "Craft & interiors",
@@ -440,25 +443,14 @@ export function ShowcaseClient() {
               style={{ transitionDelay: `${idx * 80}ms` }}
             >
               <div className="relative mb-8 aspect-video overflow-hidden bg-slate-300">
-                {item.img.startsWith("/showcase/") ? (
-                  <img
-                    src={withBasePath(item.img)}
-                    alt=""
-                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    width={1200}
-                    height={675}
-                    decoding="async"
-                  />
-                ) : (
-                  <Image
-                    src={item.img}
-                    alt=""
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    unoptimized
-                  />
-                )}
+                <Image
+                  src={item.img}
+                  alt=""
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  unoptimized
+                />
                 <div className="absolute inset-0 bg-teal-900/40 opacity-0 transition-opacity group-hover:opacity-100" />
                 <div className="absolute left-4 top-4 bg-[var(--sea-accent)] px-3 py-1 text-[10px] font-bold uppercase text-slate-900">
                   {item.tag}
