@@ -47,12 +47,13 @@ export function Hero() {
   ].join(" · ");
 
   return (
-    <section className="relative min-h-[100dvh] overflow-hidden bg-[#050a0e]">
+    <section className="relative min-h-[100dvh] overflow-x-hidden bg-[#050a0e]">
       <HalifaxSkylineBackdrop
         palette={palette}
         ambience={ambience}
         weatherMood={weatherMood}
         reduce={reduce}
+        tempC={tempC}
       />
 
       <div className="relative z-10 flex min-h-[100dvh] flex-col justify-end px-4 pb-16 pt-28 sm:px-6 sm:pb-20 sm:pt-32 lg:px-8 lg:pb-24">

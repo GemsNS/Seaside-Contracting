@@ -1,6 +1,8 @@
 "use client";
 
 import { useId } from "react";
+import { HarbourBridgeStacks } from "@/components/HarbourBridgeStacks";
+import { HeroBillboard } from "@/components/HeroBillboard";
 import type { Ambience, HeroPalette, WeatherMood } from "@/lib/halifaxAmbient";
 
 type Props = {
@@ -8,6 +10,7 @@ type Props = {
   ambience: Ambience;
   weatherMood: WeatherMood;
   reduce: boolean;
+  tempC: number | null;
 };
 
 /** Stylized Halifax harbour skyline (waterfront + cranes); reacts to time + weather via palette. */
@@ -16,10 +19,12 @@ export function HalifaxSkylineBackdrop({
   ambience,
   weatherMood,
   reduce,
+  tempC,
 }: Props) {
   const cloudGradId = useId().replace(/:/g, "");
   const rainPatId = useId().replace(/:/g, "");
   const skylineEdgeId = useId().replace(/:/g, "");
+  const skylineMaskId = useId().replace(/:/g, "");
   /** Harbour band height — skyline sits on this line */
   const waterBand = "clamp(72px, 22vh, 200px)";
   const rain = weatherMood === "rain" || weatherMood === "storm";
@@ -36,7 +41,7 @@ export function HalifaxSkylineBackdrop({
   const moonCool = "rgba(220, 230, 255, 0.88)";
 
   return (
-    <div className="absolute inset-0 overflow-hidden" aria-hidden>
+    <div className="absolute inset-0 overflow-x-hidden overflow-y-visible" aria-hidden>
       <div
         className="hero-animated-base absolute inset-0"
         style={{ background: palette.gradient }}
@@ -67,19 +72,19 @@ export function HalifaxSkylineBackdrop({
       {/* Sun / moon */}
       {palette.celestial === "sun" ? (
         <div
-          className="pointer-events-none absolute left-[12%] top-[10%] h-[min(22vw,180px)] w-[min(22vw,180px)] rounded-full blur-[2px] md:left-[18%] md:top-[12%]"
+          className="pointer-events-none absolute left-[12%] top-[10%] h-[min(22vw,180px)] w-[min(22vw,180px)] rounded-full blur-[3px] md:left-[18%] md:top-[12%]"
           style={{
-            background: `radial-gradient(circle at 40% 35%, ${sunWarm}, rgba(255,200,120,0.35) 45%, transparent 70%)`,
-            boxShadow: `0 0 80px 24px rgba(255, 200, 140, 0.25)`,
+            background: `radial-gradient(circle at 40% 35%, ${sunWarm}, rgba(255,200,120,0.28) 48%, transparent 72%)`,
+            boxShadow: `0 0 60px 28px rgba(255, 190, 120, 0.12)`,
           }}
         />
       ) : null}
       {palette.celestial === "moon" ? (
         <div
-          className="pointer-events-none absolute right-[14%] top-[8%] h-[min(14vw,120px)] w-[min(14vw,120px)] rounded-full md:right-[20%]"
+          className="pointer-events-none absolute right-[14%] top-[8%] h-[min(15vw,128px)] w-[min(15vw,128px)] rounded-full blur-[8px] md:right-[20%]"
           style={{
-            background: `radial-gradient(circle at 35% 35%, ${moonCool}, rgba(180, 195, 230, 0.4) 50%, transparent 68%)`,
-            boxShadow: `0 0 48px 12px rgba(200, 220, 255, 0.2)`,
+            background: `radial-gradient(ellipse 75% 75% at 48% 48%, rgba(215, 225, 245, 0.42) 0%, rgba(130, 150, 175, 0.12) 52%, transparent 74%)`,
+            boxShadow: `none`,
           }}
         />
       ) : null}
@@ -218,6 +223,16 @@ export function HalifaxSkylineBackdrop({
         />
       </div>
 
+      {/* Harbour mid-ground: bridge + tall stacks + temp-driven smoke (behind waterfront silhouette) */}
+      <HarbourBridgeStacks
+        waterBand={waterBand}
+        motion={motion}
+        fog={fog}
+        rain={rain}
+        tempC={tempC}
+        reduceMotion={reduce}
+      />
+
       {/* Skyline + lit windows — base sits on harbour line */}
       <div
         className="pointer-events-none absolute left-0 z-[1] w-full"
@@ -233,23 +248,30 @@ export function HalifaxSkylineBackdrop({
               <stop offset="0%" stopColor="rgba(255,255,255,0.06)" />
               <stop offset="100%" stopColor="rgba(0,0,0,0.35)" />
             </linearGradient>
+            {/* Reveal harbour (bridge + stacks) on the left; downtown stays opaque */}
+            <mask id={skylineMaskId} maskUnits="userSpaceOnUse">
+              <rect width="1200" height="200" fill="white" />
+              <rect x="0" y="0" width="340" height="200" fill="black" />
+            </mask>
           </defs>
-          <path fill={palette.skylineSilhouette} d={SKYLINE_PATH} />
-          <path fill={`url(#${skylineEdgeId})`} d={SKYLINE_PATH} opacity={0.5} />
-          <g style={{ opacity: palette.windowGlowOpacity }}>
-            {WINDOW_RECTS.map(([x, y, w, h], i) => (
-              <rect
-                key={i}
-                x={x}
-                y={y}
-                width={w}
-                height={h}
-                rx={1}
-                fill={palette.windowGlow}
-                className={motion ? "hero-window-flicker" : undefined}
-                style={{ animationDelay: `${(i % 7) * 0.45}s` }}
-              />
-            ))}
+          <g mask={`url(#${skylineMaskId})`}>
+            <path fill={palette.skylineSilhouette} d={SKYLINE_PATH} />
+            <path fill={`url(#${skylineEdgeId})`} d={SKYLINE_PATH} opacity={0.5} />
+            <g style={{ opacity: palette.windowGlowOpacity }}>
+              {WINDOW_RECTS.map(([x, y, w, h], i) => (
+                <rect
+                  key={i}
+                  x={x}
+                  y={y}
+                  width={w}
+                  height={h}
+                  rx={1}
+                  fill={palette.windowGlow}
+                  className={motion ? "hero-window-flicker" : undefined}
+                  style={{ animationDelay: `${(i % 7) * 0.45}s` }}
+                />
+              ))}
+            </g>
           </g>
         </svg>
       </div>
@@ -270,6 +292,8 @@ export function HalifaxSkylineBackdrop({
           backgroundSize: "48px 48px",
         }}
       />
+
+      <HeroBillboard motion={motion} waterBand={waterBand} />
     </div>
   );
 }

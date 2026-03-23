@@ -46,6 +46,75 @@ body {
   animation: hero-gradient-drift 22s ease-in-out infinite alternate;
 }
 
+.hero-harbour-drift {
+  animation: hero-harbour-drift 52s ease-in-out infinite alternate;
+}
+
+@keyframes hero-harbour-drift {
+  from {
+    transform: translateX(-5px);
+  }
+  to {
+    transform: translateX(5px);
+  }
+}
+
+.hero-smoke-puff {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-name: hero-smoke-billow;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes hero-smoke-billow {
+  0%,
+  100% {
+    transform: translate(0, 4px) scale(1);
+  }
+  50% {
+    transform: translate(12px, -32px) scale(1.12);
+  }
+}
+
+/* Billboard on barge — gentle drift in the water */
+.hero-barge-float {
+  animation: hero-barge-float 20s ease-in-out infinite alternate;
+}
+
+@keyframes hero-barge-float {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(4px, -5px);
+  }
+}
+
+.hero-nav-light-red {
+  animation: hero-nav-twinkle 2.3s ease-in-out infinite;
+}
+
+.hero-nav-light-green {
+  animation: hero-nav-twinkle 2.3s ease-in-out infinite;
+  animation-delay: 0.75s;
+}
+
+.hero-nav-light-white {
+  animation: hero-nav-twinkle 3.1s ease-in-out infinite;
+  animation-delay: 0.4s;
+}
+
+@keyframes hero-nav-twinkle {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-animated-base {
     animation: none;
@@ -62,8 +131,18 @@ body {
   .hero-rain-layer,
   .hero-snow-flake,
   .hero-star-dot,
-  .hero-window-flicker {
+  .hero-window-flicker,
+  .hero-barge-float,
+  .hero-harbour-drift,
+  .hero-smoke-puff {
     animation: none !important;
+  }
+
+  .hero-nav-light-red,
+  .hero-nav-light-green,
+  .hero-nav-light-white {
+    animation: none !important;
+    opacity: 0.9 !important;
   }
 }
 
