@@ -29,6 +29,8 @@ export type HalifaxAmbientState = {
 };
 
 export function useHalifaxAmbient(): HalifaxAmbientState {
+  /** False during SSR / static pre-render — `Date` there is build time (e.g. GitHub Actions), not the visitor. */
+  const [clientReady, setClientReady] = useState(false);
   const [tick, setTick] = useState(0);
   const [weather, setWeather] = useState<{
     tempC: number;
@@ -59,6 +61,10 @@ export function useHalifaxAmbient(): HalifaxAmbientState {
   }, []);
 
   useEffect(() => {
+    setClientReady(true);
+  }, []);
+
+  useEffect(() => {
     loadWeather();
     const w = window.setInterval(loadWeather, WEATHER_REFRESH_MS);
     return () => window.clearInterval(w);
@@ -70,8 +76,8 @@ export function useHalifaxAmbient(): HalifaxAmbientState {
   }, []);
 
   const now = useMemo(() => new Date(), [tick]);
-  const hour = getHalifaxHour(now);
-  const ambience = getAmbienceFromHour(hour);
+  const hour = clientReady ? getHalifaxHour(now) : 12;
+  const ambience = clientReady ? getAmbienceFromHour(hour) : "day";
   const weatherMood = weather ? wmoToMood(weather.code) : "unknown";
   const weatherLabelText = weather ? weatherLabel(weather.code) : "Weather unavailable";
 
@@ -81,7 +87,7 @@ export function useHalifaxAmbient(): HalifaxAmbientState {
     [ambience, weatherMood, weather?.isDay],
   );
 
-  const timeLabel = formatHalifaxTime(now);
+  const timeLabel = clientReady ? formatHalifaxTime(now) : "…";
 
   return {
     timeLabel,
