@@ -132,6 +132,7 @@ body {
   .hero-snow-flake,
   .hero-star-dot,
   .hero-window-flicker,
+  .hero-window-glimmer,
   .hero-barge-float,
   .hero-harbour-drift,
   .hero-smoke-puff {
@@ -143,6 +144,10 @@ body {
   .hero-nav-light-white {
     animation: none !important;
     opacity: 0.9 !important;
+  }
+
+  .hero-backdrop-blur-layer {
+    filter: none !important;
   }
 }
 
@@ -274,5 +279,42 @@ body {
   }
   100% {
     opacity: 1;
+  }
+}
+
+/* Sharper “alive” city lights — staggered twinkle */
+.hero-window-glimmer {
+  animation: hero-window-glimmer 3.2s ease-in-out infinite;
+}
+
+@keyframes hero-window-glimmer {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  30% {
+    opacity: 0.55;
+  }
+  45% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 0.4;
+  }
+  78% {
+    opacity: 0.92;
+  }
+}
+
+/* Softens illustrated harbour layer; billboard is a sibling and stays sharp */
+.hero-backdrop-blur-layer {
+  filter: blur(1.15px);
+  transform: translateZ(0);
+  will-change: filter;
+}
+
+@media (max-width: 640px) {
+  .hero-backdrop-blur-layer {
+    filter: blur(0.85px);
   }
 }

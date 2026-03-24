@@ -12,8 +12,18 @@ type Props = {
   reduceMotion: boolean;
 };
 
+/** Parabolic cable (Angus-inspired): olive green towers, golden suspenders, full-width deck */
+function cableY(x: number): number {
+  const xv = 600;
+  const yv = 46;
+  const yL = 104;
+  const xL = 88;
+  const a = (yL - yv) / (xL - xv) ** 2;
+  return a * (x - xv) ** 2 + yv;
+}
+
 /**
- * Tall striped stacks + bridge; billowing smoke scales with Halifax temperature (Open-Meteo).
+ * Tall striped stacks + full-span harbour bridge; smoke scales with Halifax temperature (Open-Meteo).
  */
 export function HarbourBridgeStacks({
   waterBand,
@@ -24,7 +34,8 @@ export function HarbourBridgeStacks({
   reduceMotion,
 }: Props) {
   const stripeId = useId().replace(/:/g, "");
-  const cableGradId = useId().replace(/:/g, "");
+  const cableGlowId = useId().replace(/:/g, "");
+  const towerFaceId = useId().replace(/:/g, "");
   const smokeBlurId = useId().replace(/:/g, "");
 
   const smoke = smokeParamsFromTemp(tempC);
@@ -38,6 +49,19 @@ export function HarbourBridgeStacks({
 
   const plantTopY = 360;
 
+  const bridgeGreen = "#5f7f68";
+  const bridgeGreenDark = "#3d5a46";
+  const bridgeGreenLight = "#7a9a82";
+  const cableGold = "#e8a820";
+  const cableGoldDim = "#c87a0a";
+  const deckTop = 386;
+  const cableControlY = 40;
+
+  const suspenderXs = [
+    95, 145, 195, 245, 295, 345, 395, 445, 495, 545, 595, 645, 695, 745, 795, 845, 895, 945, 995, 1045,
+    1095,
+  ];
+
   return (
     <div
       className={`pointer-events-none absolute left-0 z-0 w-full overflow-visible ${
@@ -49,26 +73,22 @@ export function HarbourBridgeStacks({
         opacity: layerOpacity,
       }}
     >
-      <svg
-        className="h-full w-full"
-        viewBox="0 0 1200 480"
-        preserveAspectRatio="none"
-        aria-hidden
-      >
+      <svg className="h-full w-full" viewBox="0 0 1200 480" preserveAspectRatio="none" aria-hidden>
         <defs>
-          <pattern
-            id={stripeId}
-            patternUnits="userSpaceOnUse"
-            width="32"
-            height="20"
-          >
+          <pattern id={stripeId} patternUnits="userSpaceOnUse" width="32" height="20">
             <rect width="32" height="10" fill="#e2e8f0" />
             <rect y="10" width="32" height="10" fill="#dc2626" />
           </pattern>
-          <linearGradient id={cableGradId} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#57534e" stopOpacity="0.55" />
-            <stop offset="50%" stopColor="#44403c" stopOpacity="0.62" />
-            <stop offset="100%" stopColor="#57534e" stopOpacity="0.55" />
+          <linearGradient id={cableGlowId} x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor={cableGoldDim} stopOpacity="0.95" />
+            <stop offset="35%" stopColor={cableGold} stopOpacity="1" />
+            <stop offset="70%" stopColor="#f5c14d" stopOpacity="1" />
+            <stop offset="100%" stopColor={cableGoldDim} stopOpacity="0.95" />
+          </linearGradient>
+          <linearGradient id={towerFaceId} gradientUnits="objectBoundingBox" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor={bridgeGreenDark} />
+            <stop offset="45%" stopColor={bridgeGreen} />
+            <stop offset="100%" stopColor={bridgeGreenLight} />
           </linearGradient>
           <filter id={smokeBlurId} x="-80%" y="-80%" width="260%" height="260%">
             <feGaussianBlur in="SourceGraphic" stdDeviation={smoke.blurStd} result="b" />
@@ -96,7 +116,6 @@ export function HarbourBridgeStacks({
           );
         })}
 
-        {/* Plumes — one group per stack */}
         {stacks.map(({ cx, h }, sIdx) => {
           const topY = plantTopY - h;
           const layers = smoke.layers;
@@ -108,9 +127,7 @@ export function HarbourBridgeStacks({
                 return (
                   <ellipse
                     key={i}
-                    className={
-                      motion && !reduceMotion ? "hero-smoke-puff" : undefined
-                    }
+                    className={motion && !reduceMotion ? "hero-smoke-puff" : undefined}
                     cx={cx + ox}
                     cy={topY - 8 - i * 36 * smoke.puffScale}
                     rx={22 * s}
@@ -127,86 +144,87 @@ export function HarbourBridgeStacks({
           );
         })}
 
-        <rect x="268" y="310" width="44" height="170" fill="#1e293b" opacity="0.82" rx="2" />
+        {/* Full-width bridge deck */}
+        <rect x="0" y={deckTop} width="1200" height="14" fill="#2c3e35" opacity="0.92" rx="1" />
+        <rect x="0" y={deckTop + 5} width="1200" height="8" fill="#1a2820" opacity="0.55" rx="1" />
+        <line x1="0" y1={deckTop + 13} x2="1200" y2={deckTop + 13} stroke="#4a6652" strokeWidth="1.2" opacity="0.5" />
 
+        {/* Left tower */}
+        <rect x="58" y="88" width="56" height={298} fill={`url(#${towerFaceId})`} rx="2" opacity="0.95" />
         <path
-          d="M 70 260 Q 170 220 290 300"
-          fill="none"
-          stroke={`url(#${cableGradId})`}
-          strokeWidth="3"
-          strokeLinecap="round"
-          opacity="0.72"
-        />
-        <path
-          d="M 290 300 Q 620 120 1048 105"
-          fill="none"
-          stroke={`url(#${cableGradId})`}
+          d="M 74 98 L 98 98 M 74 128 L 98 128 M 74 158 L 98 158 M 74 188 L 98 188 M 74 218 L 98 218 M 74 248 L 98 248 M 74 278 L 98 278 M 74 308 L 98 308 M 74 338 L 98 338"
+          stroke={bridgeGreenDark}
           strokeWidth="3.5"
           strokeLinecap="round"
+          opacity="0.65"
         />
         <path
-          d="M 305 308 Q 625 130 1035 115"
-          fill="none"
-          stroke="#334155"
-          strokeWidth="2"
-          opacity="0.45"
-        />
-        <path
-          d="M 86 272 Q 186 232 296 312"
-          fill="none"
-          stroke="#334155"
-          strokeWidth="1.8"
-          opacity="0.42"
-        />
-
-        {[
-          [140, 250],
-          [210, 232],
-          [380, 175],
-          [500, 145],
-          [680, 118],
-          [860, 108],
-          [980, 102],
-        ].map(([x, cy], i) => (
-          <line
-            key={i}
-            x1={x}
-            y1={cy}
-            x2={x}
-            y2={392}
-            stroke="#475569"
-            strokeWidth="1.2"
-            opacity="0.4"
-          />
-        ))}
-
-        <rect x="0" y="388" width="1160" height="14" fill="#0f172a" opacity="0.88" rx="1" />
-        <rect x="0" y="392" width="1160" height="9" fill="#111827" opacity="0.45" rx="1" />
-        <line
-          x1="0"
-          y1="402"
-          x2="1160"
-          y2="402"
-          stroke="#334155"
-          strokeWidth="2"
+          d="M 66 104 L 106 352 M 106 104 L 66 352"
+          stroke={bridgeGreenDark}
+          strokeWidth="2.8"
+          strokeLinecap="round"
           opacity="0.45"
         />
 
-        <rect x="1018" y="95" width="58" height="278" fill="#1e293b" opacity="0.9" rx="2" />
-        <path
-          d="M 1026 110 L 1068 260 M 1068 110 L 1026 260"
-          stroke="#334155"
-          strokeWidth="4.5"
-          strokeLinecap="round"
-          opacity="0.88"
+        {/* Right tower — anchors full span */}
+        <rect
+          x="1088"
+          y="86"
+          width="62"
+          height={300}
+          fill={`url(#${towerFaceId})`}
+          rx="2"
+          opacity="0.95"
         />
         <path
-          d="M 1036 140 L 1058 230 M 1058 140 L 1036 230"
-          stroke="#475569"
-          strokeWidth="3"
+          d="M 1106 96 L 1132 96 M 1106 128 L 1132 128 M 1106 160 L 1132 160 M 1106 192 L 1132 192 M 1106 224 L 1132 224 M 1106 256 L 1132 256 M 1106 288 L 1132 288 M 1106 320 L 1132 320 M 1106 352 L 1132 352"
+          stroke={bridgeGreenDark}
+          strokeWidth="3.5"
           strokeLinecap="round"
-          opacity="0.6"
+          opacity="0.65"
         />
+        <path
+          d="M 1096 102 L 1142 368 M 1142 102 L 1096 368"
+          stroke={bridgeGreenDark}
+          strokeWidth="2.8"
+          strokeLinecap="round"
+          opacity="0.45"
+        />
+
+        {/* Main suspension cables — edge to edge */}
+        <path
+          d={`M 86 ${cableY(86)} Q 600 ${cableControlY} 1114 ${cableY(1114)}`}
+          fill="none"
+          stroke={`url(#${cableGlowId})`}
+          strokeWidth="4"
+          strokeLinecap="round"
+          style={{ filter: "drop-shadow(0 0 1px rgba(245, 190, 60, 0.45))" }}
+        />
+        <path
+          d={`M 92 ${cableY(92) + 14} Q 600 ${cableControlY + 22} 1108 ${cableY(1108) + 12}`}
+          fill="none"
+          stroke={cableGoldDim}
+          strokeWidth="2.4"
+          strokeLinecap="round"
+          opacity="0.75"
+        />
+
+        {/* Suspenders — distributed across full span */}
+        {suspenderXs.map((x, i) => {
+          const yCable = cableY(x);
+          return (
+            <line
+              key={i}
+              x1={x}
+              y1={yCable + 8}
+              x2={x}
+              y2={deckTop - 1}
+              stroke="#6b7280"
+              strokeWidth="1.1"
+              opacity="0.55"
+            />
+          );
+        })}
       </svg>
     </div>
   );

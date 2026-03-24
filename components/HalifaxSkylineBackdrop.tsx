@@ -42,6 +42,8 @@ export function HalifaxSkylineBackdrop({
 
   return (
     <div className="absolute inset-0 overflow-x-hidden overflow-y-visible" aria-hidden>
+      {/* Blur illustrated layers only; HeroBillboard stays sharp as a sibling below */}
+      <div className="hero-backdrop-blur-layer absolute inset-0">
       <div
         className="hero-animated-base absolute inset-0"
         style={{ background: palette.gradient }}
@@ -260,15 +262,38 @@ export function HalifaxSkylineBackdrop({
             <g style={{ opacity: palette.windowGlowOpacity }}>
               {WINDOW_RECTS.map(([x, y, w, h], i) => (
                 <rect
-                  key={i}
+                  key={`f-${i}`}
                   x={x}
                   y={y}
                   width={w}
                   height={h}
                   rx={1}
                   fill={palette.windowGlow}
-                  className={motion ? "hero-window-flicker" : undefined}
-                  style={{ animationDelay: `${(i % 7) * 0.45}s` }}
+                  className={
+                    motion ? (i % 2 === 0 ? "hero-window-flicker" : "hero-window-glimmer") : undefined
+                  }
+                  style={{ animationDelay: `${(i % 11) * 0.31}s` }}
+                />
+              ))}
+              {WINDOW_GLIMMER_RECTS.map(([x, y, w, h], i) => (
+                <rect
+                  key={`g-${i}`}
+                  x={x}
+                  y={y}
+                  width={w}
+                  height={h}
+                  rx={1}
+                  fill={palette.windowGlow}
+                  className={motion ? "hero-window-glimmer" : undefined}
+                  style={{
+                    animationDelay: `${0.15 + (i % 13) * 0.24}s`,
+                    fill:
+                      i % 4 === 0
+                        ? "rgba(255, 235, 190, 0.95)"
+                        : i % 4 === 1
+                          ? "rgba(200, 230, 255, 0.85)"
+                          : palette.windowGlow,
+                  }}
                 />
               ))}
             </g>
@@ -292,6 +317,7 @@ export function HalifaxSkylineBackdrop({
           backgroundSize: "48px 48px",
         }}
       />
+      </div>
 
       <HeroBillboard motion={motion} waterBand={waterBand} />
     </div>
@@ -377,4 +403,52 @@ const WINDOW_RECTS: [number, number, number, number][] = [
   [944, 124, 7, 8],
   [1040, 128, 6, 7],
   [1050, 128, 6, 7],
+  [230, 118, 6, 7],
+  [246, 118, 6, 7],
+  [262, 130, 6, 7],
+  [454, 98, 7, 8],
+  [468, 98, 7, 8],
+  [454, 112, 7, 8],
+  [638, 78, 6, 7],
+  [650, 78, 6, 7],
+  [638, 92, 6, 7],
+  [888, 94, 7, 8],
+  [902, 94, 7, 8],
+  [888, 108, 7, 8],
+  [1102, 122, 6, 7],
+  [1114, 122, 6, 7],
+];
+
+/** Extra twinkling points — smaller “lit window” accents across the silhouette */
+const WINDOW_GLIMMER_RECTS: [number, number, number, number][] = [
+  [48, 144, 4, 5],
+  [92, 110, 4, 5],
+  [168, 92, 5, 5],
+  [188, 104, 4, 4],
+  [288, 124, 4, 4],
+  [302, 112, 4, 4],
+  [378, 68, 4, 5],
+  [392, 80, 4, 4],
+  [488, 100, 4, 4],
+  [512, 112, 5, 4],
+  [540, 118, 4, 4],
+  [622, 88, 4, 4],
+  [652, 96, 4, 4],
+  [702, 108, 4, 4],
+  [724, 118, 4, 4],
+  [770, 88, 4, 4],
+  [788, 100, 4, 4],
+  [848, 114, 5, 4],
+  [902, 72, 4, 4],
+  [958, 108, 4, 4],
+  [978, 96, 4, 4],
+  [1006, 124, 4, 4],
+  [1068, 116, 4, 4],
+  [1128, 122, 4, 4],
+  [1168, 128, 4, 4],
+  [132, 118, 3, 3],
+  [356, 96, 3, 3],
+  [612, 108, 3, 3],
+  [872, 102, 3, 3],
+  [1028, 130, 3, 3],
 ];

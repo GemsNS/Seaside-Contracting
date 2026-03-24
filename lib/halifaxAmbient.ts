@@ -217,16 +217,16 @@ export function buildHeroPalette(
 
   if (isNightAmbience(ambience)) {
     vignetteBottom = "rgba(0,0,0,0.72)";
-    topGlow = "rgba(30, 60, 120, 0.08)";
+    topGlow = "rgba(45, 75, 90, 0.1)";
     waveOpacity *= 0.75;
   }
 
   const gradients: Record<Ambience, string> = {
-    night: `linear-gradient(135deg, #020508 0%, #050f18 25%, #061420 50%, #03080c 75%, #010305 100%)`,
+    night: `linear-gradient(135deg, #030a08 0%, #081418 22%, #0c1820 48%, #061016 72%, #020508 100%)`,
     dawn: `linear-gradient(135deg, #0a1220 0%, #1a2040 22%, #2c2848 45%, #0f1c28 70%, #060c12 100%)`,
     day: `linear-gradient(180deg, #d8e8f0 0%, #b8d4e8 18%, #8fb8d0 38%, #6a9ab8 58%, #4a7a94 78%, #355a6e 100%)`,
     dusk: `linear-gradient(135deg, #080c14 0%, #1a1828 20%, #2a1f30 42%, #0f1824 68%, #05080e 100%)`,
-    evening: `linear-gradient(135deg, #030508 0%, #0c1420 30%, #081018 55%, #04060a 100%)`,
+    evening: `linear-gradient(135deg, #040a0c 0%, #0c1620 28%, #081418 52%, #05080c 100%)`,
   };
 
   let gradient = gradients[ambience];
@@ -278,7 +278,7 @@ export function buildHeroPalette(
 
   const nightLike = isNightAmbience(ambience);
   if (nightLike) {
-    windowGlowOpacity = ambience === "night" ? 0.52 : 0.36;
+    windowGlowOpacity = ambience === "night" ? 0.56 : 0.4;
     starOpacity =
       fog || rain || snow ? 0.04 : cloudy ? 0.12 : mood === "clear" ? 0.5 : 0.28;
     reflectionOpacity = 0.18;
