@@ -5,6 +5,9 @@ import { NovaScotiaFlag } from "@/components/NovaScotiaFlag";
 
 const quick = [
   { href: "/", label: "Home" },
+  { href: "/showcase", label: "Showcase" },
+  { href: "/pricing", label: "Pricing" },
+  { href: "/#gallery", label: "Gallery" },
   { href: "/#services", label: "Services" },
   { href: "/#about", label: "About" },
   { href: "/#contact", label: "Contact" },

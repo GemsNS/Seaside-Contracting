@@ -9,8 +9,10 @@ import { withBasePath } from "@/lib/withBasePath";
 const nav = [
   { href: "/", label: "Home" },
   { href: "/showcase", label: "Showcase" },
+  { href: "/pricing", label: "Pricing" },
   { href: "/#exterior-design", label: "Designer" },
   { href: "/#services", label: "Services" },
+  { href: "/#gallery", label: "Gallery" },
   { href: "/#about", label: "About" },
   { href: "/#contact", label: "Contact" },
 ];

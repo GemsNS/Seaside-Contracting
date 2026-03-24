@@ -12,33 +12,30 @@ import {
   Youtube,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { JOB_SHOWCASE_IMAGES } from "@/lib/jobShowcaseImages";
 import { withBasePath } from "@/lib/withBasePath";
 import "./showcase.css";
 
-/** External placeholder photos (picsum — stable seeds; swap for real assets later). */
-const PLACEHOLDER_TEAM = "https://picsum.photos/seed/seaside-team/800/1000";
-const PLACEHOLDER_NEWS_1 = "https://picsum.photos/seed/seaside-news-1/1200/675";
-const PLACEHOLDER_NEWS_3 = "https://picsum.photos/seed/seaside-news-3/1200/675";
+const HERO_IMAGES = JOB_SHOWCASE_IMAGES.slice(0, 3);
+const FEATURED_GRID_IMAGES = JOB_SHOWCASE_IMAGES.slice(3, 15);
+const TEAM_IMAGE = JOB_SHOWCASE_IMAGES[15] ?? JOB_SHOWCASE_IMAGES[0];
 
-/** Stable Unsplash URLs (next/image needs relative parent for `fill`; see hero markup). */
+/** Showcase hero slides sourced from completed Seaside projects. */
 const SLIDES = [
   {
-    image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2400&q=80",
+    image: HERO_IMAGES[0]?.src ?? TEAM_IMAGE.src,
     eyebrow: "Coastal residential",
     title: "Precision and craft for Halifax & Nova Scotia homes",
     href: "/#contact",
   },
   {
-    image:
-      "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2400&q=80",
+    image: HERO_IMAGES[1]?.src ?? TEAM_IMAGE.src,
     eyebrow: "Exteriors & outdoor living",
     title: "Decks, siding, windows, and doors built for Atlantic weather",
     href: "/#exterior-design",
   },
   {
-    image:
-      "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=2400&q=80",
+    image: HERO_IMAGES[2]?.src ?? TEAM_IMAGE.src,
     eyebrow: "Built to last",
     title: "Resilient details for salt air, wind, and coastal seasons",
     href: "/#about",
@@ -392,7 +389,7 @@ export function ShowcaseClient() {
             <div className="absolute right-0 top-0 h-full w-32 bg-[var(--sea-accent)]/10 showcase-clip-wing-tr" />
             <div className="relative aspect-[4/5] w-full overflow-hidden showcase-owner-mask">
               <Image
-                src={PLACEHOLDER_TEAM}
+                src={TEAM_IMAGE.src}
                 alt="Construction professionals at work"
                 fill
                 className="object-cover transition-transform duration-1000 hover:scale-105"
@@ -405,63 +402,54 @@ export function ShowcaseClient() {
         </div>
       </section>
 
-      {/* News */}
+      {/* Gallery */}
       <section className="bg-slate-50 px-8 py-32 md:px-24">
         <div className="showcase-reveal mb-16 flex flex-col items-end justify-between gap-6 sm:flex-row">
-          <h2 className="text-4xl font-extrabold">From the coast</h2>
-          <Link
-            href="/"
-            className="border-b-2 border-slate-300 pb-1 text-xs font-bold uppercase tracking-widest transition hover:border-teal-900"
-          >
-            Back to home
-          </Link>
+          <div>
+            <p className="mb-4 text-xs font-bold uppercase tracking-widest text-slate-400">Completed projects</p>
+            <h2 className="text-4xl font-extrabold">From the Seaside gallery</h2>
+          </div>
+          <div className="flex flex-wrap gap-6">
+            <Link
+              href="/pricing"
+              className="border-b-2 border-slate-300 pb-1 text-xs font-bold uppercase tracking-widest transition hover:border-teal-900"
+            >
+              See pricing
+            </Link>
+            <Link
+              href="/"
+              className="border-b-2 border-slate-300 pb-1 text-xs font-bold uppercase tracking-widest transition hover:border-teal-900"
+            >
+              Back to home
+            </Link>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
-          {[
-            {
-              img: PLACEHOLDER_NEWS_1,
-              tag: "Projects",
-              title: "Coastal renos: what we prioritize before the first nail",
-              meta: "Residential | Nova Scotia",
-            },
-            {
-              img: "https://images.unsplash.com/photo-1471039497385-b6d6ba609f9c?auto=format&fit=crop&w=1200&q=80",
-              tag: "Exteriors",
-              title: "Windows, siding, and doors: spec notes for salt-spray zones",
-              meta: "Exterior package | HRM",
-            },
-            {
-              img: PLACEHOLDER_NEWS_3,
-              tag: "Craft",
-              title: "Finish carpentry that survives seasonal movement",
-              meta: "Craft & interiors",
-            },
-          ].map((item, idx) => (
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+          {FEATURED_GRID_IMAGES.map((item, idx) => (
             <div
-              key={item.title}
-              className="showcase-reveal group cursor-pointer"
+              key={`${item.alt}-${idx}`}
+              className="showcase-reveal group"
               style={{ transitionDelay: `${idx * 80}ms` }}
             >
               <div className="relative mb-8 aspect-video overflow-hidden bg-slate-300">
                 <Image
-                  src={item.img}
-                  alt=""
+                  src={item.src}
+                  alt={item.alt}
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                   sizes="(max-width: 768px) 100vw, 33vw"
-                  unoptimized
                 />
                 <div className="absolute inset-0 bg-teal-900/40 opacity-0 transition-opacity group-hover:opacity-100" />
                 <div className="absolute left-4 top-4 bg-[var(--sea-accent)] px-3 py-1 text-[10px] font-bold uppercase text-slate-900">
-                  {item.tag}
+                  Seaside project
                 </div>
               </div>
               <h3 className="text-2xl font-bold leading-tight transition-colors group-hover:text-teal-900">
-                {item.title}
+                Exterior craftsmanship in the field
               </h3>
               <p className="mt-6 text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                {item.meta}
+                Halifax | HRM | Coastal Nova Scotia
               </p>
             </div>
           ))}
@@ -496,6 +484,11 @@ export function ShowcaseClient() {
               <li>
                 <Link href="/#services" className="transition hover:text-white">
                   Services
+                </Link>
+              </li>
+              <li>
+                <Link href="/pricing" className="transition hover:text-white">
+                  Pricing
                 </Link>
               </li>
               <li>
