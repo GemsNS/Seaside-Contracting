@@ -251,7 +251,7 @@ export function HalifaxSkylineBackdrop({
             {/* Reveal harbour (bridge + stacks) on the left; downtown stays opaque */}
             <mask id={skylineMaskId} maskUnits="userSpaceOnUse">
               <rect width="1200" height="200" fill="white" />
-              <rect x="0" y="0" width="340" height="200" fill="black" />
+              <rect x="0" y="0" width="120" height="200" fill="black" />
             </mask>
           </defs>
           <g mask={`url(#${skylineMaskId})`}>

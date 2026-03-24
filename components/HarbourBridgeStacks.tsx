@@ -130,6 +130,14 @@ export function HarbourBridgeStacks({
         <rect x="268" y="310" width="44" height="170" fill="#1e293b" opacity="0.82" rx="2" />
 
         <path
+          d="M 70 260 Q 170 220 290 300"
+          fill="none"
+          stroke={`url(#${cableGradId})`}
+          strokeWidth="3"
+          strokeLinecap="round"
+          opacity="0.72"
+        />
+        <path
           d="M 290 300 Q 620 120 1048 105"
           fill="none"
           stroke={`url(#${cableGradId})`}
@@ -143,8 +151,17 @@ export function HarbourBridgeStacks({
           strokeWidth="2"
           opacity="0.45"
         />
+        <path
+          d="M 86 272 Q 186 232 296 312"
+          fill="none"
+          stroke="#334155"
+          strokeWidth="1.8"
+          opacity="0.42"
+        />
 
         {[
+          [140, 250],
+          [210, 232],
           [380, 175],
           [500, 145],
           [680, 118],
@@ -163,9 +180,10 @@ export function HarbourBridgeStacks({
           />
         ))}
 
-        <rect x="300" y="388" width="860" height="14" fill="#0f172a" opacity="0.88" rx="1" />
+        <rect x="0" y="388" width="1160" height="14" fill="#0f172a" opacity="0.88" rx="1" />
+        <rect x="0" y="392" width="1160" height="9" fill="#111827" opacity="0.45" rx="1" />
         <line
-          x1="300"
+          x1="0"
           y1="402"
           x2="1160"
           y2="402"
