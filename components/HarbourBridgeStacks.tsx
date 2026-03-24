@@ -52,7 +52,7 @@ export function HarbourBridgeStacks({
       <svg
         className="h-full w-full"
         viewBox="0 0 1200 480"
-        preserveAspectRatio="xMidYMax meet"
+        preserveAspectRatio="none"
         aria-hidden
       >
         <defs>
