@@ -47,7 +47,10 @@ export function Hero() {
   ].join(" · ");
 
   return (
-    <section className="relative min-h-[100dvh] overflow-x-hidden bg-[#050a0e]">
+    <section
+      className="relative min-h-[100dvh] overflow-x-hidden"
+      style={{ background: palette.gradient }}
+    >
       <HalifaxSkylineBackdrop
         palette={palette}
         ambience={ambience}

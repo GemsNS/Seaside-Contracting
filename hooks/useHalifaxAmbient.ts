@@ -77,7 +77,12 @@ export function useHalifaxAmbient(): HalifaxAmbientState {
 
   const now = useMemo(() => new Date(), [tick]);
   const hour = clientReady ? getHalifaxHour(now) : 12;
-  const ambience = clientReady ? getAmbienceFromHour(hour) : "day";
+  const hourAmbience = clientReady ? getAmbienceFromHour(hour) : "day";
+  /** Open-Meteo solar flag for Halifax — if hour math is wrong on a device, is_day=1 still means daylight. */
+  const ambience =
+    clientReady && weather?.isDay === 1 && (hourAmbience === "night" || hourAmbience === "evening")
+      ? "day"
+      : hourAmbience;
   const weatherMood = weather ? wmoToMood(weather.code) : "unknown";
   const weatherLabelText = weather ? weatherLabel(weather.code) : "Weather unavailable";
 

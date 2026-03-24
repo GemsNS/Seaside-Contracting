@@ -35,7 +35,7 @@ export function Header() {
     : "text-white/90 hover:text-primary-aqua";
 
   const headerShell = transparent
-    ? "border-transparent bg-transparent"
+    ? "border-transparent bg-black/25 backdrop-blur-sm"
     : "border-zinc-800/80 bg-zinc-950/98 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.5)] backdrop-blur-sm";
 
   return (

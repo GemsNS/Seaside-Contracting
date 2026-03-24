@@ -19,15 +19,23 @@ export type WeatherMood =
   | "unknown";
 
 export function getHalifaxHour(d: Date): number {
-  const h = new Intl.DateTimeFormat("en-CA", {
-    timeZone: HALIFAX_TZ,
-    hour: "numeric",
-    hour12: false,
-    hourCycle: "h23",
-  })
-    .formatToParts(d)
-    .find((p) => p.type === "hour")?.value;
-  return h !== undefined ? parseInt(h, 10) : 12;
+  try {
+    const h = new Intl.DateTimeFormat("en-CA", {
+      timeZone: HALIFAX_TZ,
+      hour: "numeric",
+      hour12: false,
+      hourCycle: "h23",
+    })
+      .formatToParts(d)
+      .find((p) => p.type === "hour")?.value;
+    if (h !== undefined) {
+      const n = parseInt(h, 10);
+      if (!Number.isNaN(n)) return ((n % 24) + 24) % 24;
+    }
+  } catch {
+    /* fall through */
+  }
+  return d.getHours();
 }
 
 /** Visual bucket from Halifax local hour (approximate sun times vary by season). */
@@ -169,7 +177,22 @@ export function buildHeroPalette(
   let waveOpacity = 0.4;
   let gridOpacity = 0.04;
 
-  if (rain) {
+  if (ambience === "day") {
+    orbA = "rgba(120, 200, 255, 0.35)";
+    orbB = "rgba(40, 120, 200, 0.22)";
+    orbC = "rgba(255, 255, 255, 0.2)";
+    topGlow = "rgba(255, 255, 255, 0.45)";
+    vignetteBottom = "rgba(0,0,0,0.1)";
+    gridOpacity = 0.025;
+  }
+
+  if (rain && ambience === "day") {
+    orbA = "rgba(140, 190, 220, 0.28)";
+    orbB = "rgba(60, 120, 170, 0.22)";
+    orbC = "rgba(220, 235, 245, 0.12)";
+    topGlow = "rgba(180, 210, 235, 0.2)";
+    waveOpacity = 0.48;
+  } else if (rain) {
     orbA = "rgba(120, 160, 190, 0.18)";
     orbB = "rgba(40, 70, 95, 0.35)";
     orbC = "rgba(180, 200, 220, 0.08)";
@@ -201,15 +224,17 @@ export function buildHeroPalette(
   const gradients: Record<Ambience, string> = {
     night: `linear-gradient(135deg, #020508 0%, #050f18 25%, #061420 50%, #03080c 75%, #010305 100%)`,
     dawn: `linear-gradient(135deg, #0a1220 0%, #1a2040 22%, #2c2848 45%, #0f1c28 70%, #060c12 100%)`,
-    day: `linear-gradient(135deg, #050a0e 0%, #0a1a24 18%, #0c2433 35%, #08202c 52%, #06121a 70%, #04080c 100%)`,
+    day: `linear-gradient(180deg, #d8e8f0 0%, #b8d4e8 18%, #8fb8d0 38%, #6a9ab8 58%, #4a7a94 78%, #355a6e 100%)`,
     dusk: `linear-gradient(135deg, #080c14 0%, #1a1828 20%, #2a1f30 42%, #0f1824 68%, #05080e 100%)`,
     evening: `linear-gradient(135deg, #030508 0%, #0c1420 30%, #081018 55%, #04060a 100%)`,
   };
 
   let gradient = gradients[ambience];
 
-  if (rain) {
+  if (rain && ambience !== "day") {
     gradient = `linear-gradient(135deg, #060a10 0%, #0c1822 30%, #142830 60%, #080c12 100%)`;
+  } else if (rain && ambience === "day") {
+    gradient = `linear-gradient(180deg, #c8d8e4 0%, #a8c4d8 25%, #88a8c0 55%, #5a8098 100%)`;
   } else if (snow) {
     gradient = `linear-gradient(135deg, #0a1018 0%, #12202c 35%, #1a2834 65%, #0c1218 100%)`;
   } else if (fog) {
@@ -223,6 +248,11 @@ export function buildHeroPalette(
   let skylineSilhouette = "rgba(6, 14, 22, 0.94)";
   let waterSurface = "rgba(0, 95, 118, 0.5)";
   let waterDeep = "rgba(0, 28, 42, 0.92)";
+  if (ambience === "day") {
+    skylineSilhouette = "rgba(28, 48, 58, 0.88)";
+    waterSurface = "rgba(0, 110, 135, 0.42)";
+    waterDeep = "rgba(0, 45, 62, 0.85)";
+  }
   let windowGlow = "rgba(255, 215, 160, 0.9)";
   let windowGlowOpacity = 0.28;
   let cloudOpacity = cloudy || rain || fog || snow ? 0.48 : 0.22;
