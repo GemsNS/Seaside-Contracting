@@ -6,13 +6,16 @@ import { JobShowcaseGallery } from "@/components/sections/JobShowcaseGallery";
 import { PricingHighlight } from "@/components/sections/PricingHighlight";
 import { Services } from "@/components/sections/Services";
 import { ValueProposition } from "@/components/sections/ValueProposition";
+import { getPricingItems } from "@/lib/pricingData";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const pricingItems = await getPricingItems();
+
   return (
     <>
       <Hero />
       <ValueProposition />
-      <ExteriorDesigner />
+      <ExteriorDesigner pricingItems={pricingItems} />
       <Services />
       <JobShowcaseGallery />
       <PricingHighlight />

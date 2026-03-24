@@ -5,6 +5,7 @@ import { Check, Info } from "lucide-react";
 import { Reveal } from "@/components/motion/Reveal";
 import { HousePreview } from "@/components/exterior/HousePreview";
 import { Switch } from "@/components/ui/Switch";
+import type { PricingItem } from "@/lib/pricingData";
 import {
   type DoorSubstrateId,
   type SidingMaterialId,
@@ -27,7 +28,6 @@ import {
   doorFinishOptions,
 } from "@/lib/exteriorConfiguratorData";
 
-const STORAGE_KEY = "seasideExteriorQuote";
 const SHOW_DESIGNER_KEY = "seaside-show-exterior-designer";
 
 const TABS: { id: TabId; label: string; short: string }[] = [
@@ -37,6 +37,45 @@ const TABS: { id: TabId; label: string; short: string }[] = [
 ];
 
 const GENERIC_SWATCHES = ["#5A6B7C", "#8B9C8E", "#C4B8A0", "#E8E4DC", "#2D3E50", "#00B4D8"];
+const QUOTE_STORAGE_KEY = "seasideExteriorQuote";
+
+type EstimateLine = {
+  item: string;
+  coverage: string;
+  cost: string;
+  wasteFactor: string;
+  unitRate: number;
+  quantity: number;
+};
+
+type ExteriorDesignerProps = {
+  pricingItems: PricingItem[];
+};
+
+const TAB_MATCHERS: Record<TabId, string[]> = {
+  siding: [
+    "siding",
+    "hardie",
+    "canexcel",
+    "maibec",
+    "cellular",
+    "distinction",
+    "steel",
+    "strapping",
+    "tyvek",
+    "insulation",
+    "soffit",
+    "fascia",
+    "drip flashing",
+    "wall flashing",
+    "shake",
+    "trim",
+    "batton",
+    "batten",
+  ],
+  windows: ["window", "glazing", "capping", "flashing"],
+  doors: ["door", "entry", "garage door"],
+};
 
 function sidingPatternCss(
   profileId: (typeof SIDING_PROFILES)[number]["id"],
@@ -56,7 +95,41 @@ function sidingPatternCss(
   }
 }
 
-export function ExteriorDesigner() {
+function parseRate(cost: string): number {
+  const values = [...cost.matchAll(/\$?\s*(\d+(?:\.\d+)?)/g)]
+    .map((m) => Number.parseFloat(m[1]))
+    .filter((n) => Number.isFinite(n));
+  if (!values.length) return 0;
+  if (values.length === 1) return values[0];
+  return (values[0] + values[values.length - 1]) / 2;
+}
+
+function parseWasteRate(wasteFactor: string): number {
+  const cleaned = wasteFactor.replace("%", "").trim();
+  const n = Number.parseFloat(cleaned);
+  if (!Number.isFinite(n)) return 0;
+  return n / 100;
+}
+
+function matchesTab(item: PricingItem, tab: TabId): boolean {
+  const haystack = `${item.item} ${item.coverage}`.toLowerCase();
+  return TAB_MATCHERS[tab].some((needle) => haystack.includes(needle));
+}
+
+function formatMoney(value: number): string {
+  return new Intl.NumberFormat("en-CA", {
+    style: "currency",
+    currency: "CAD",
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
+function safeNumber(value: string, fallback = 0): number {
+  const n = Number.parseFloat(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+export function ExteriorDesigner({ pricingItems }: ExteriorDesignerProps) {
   const [showDesigner, setShowDesigner] = useState(true);
   const [tab, setTab] = useState<TabId>("siding");
   const [coastalMode, setCoastalMode] = useState(true);
@@ -113,6 +186,13 @@ export function ExteriorDesigner() {
   const [doorPanelColor, setDoorPanelColor] = useState("#2a2a2a");
   const [entryHardwareFinish, setEntryHardwareFinish] = useState<string>(HARDWARE_FINISHES[1]);
   const [smartLock, setSmartLock] = useState(false);
+  const [estimateLines, setEstimateLines] = useState<EstimateLine[]>([]);
+  const [selectedRateItem, setSelectedRateItem] = useState("");
+  const [wallWidthFt, setWallWidthFt] = useState("24");
+  const [wallHeightFt, setWallHeightFt] = useState("9");
+  const [wallCount, setWallCount] = useState("1");
+  const [linearFeet, setLinearFeet] = useState("80");
+  const [openingCount, setOpeningCount] = useState("1");
 
   const pattern = useMemo(() => sidingPatternCss(sidingProfile), [sidingProfile]);
 
@@ -123,6 +203,88 @@ export function ExteriorDesigner() {
   }, [doorSubstrate, doorFinishType]);
 
   const thermalBreakNote = windowFrame === "aluminum";
+
+  const hardieMode = sidingMaterial === "fiber-cement-hardie";
+  const gentekMode = sidingMaterial === "premium-vinyl";
+
+  const sidingPalette = useMemo(() => {
+    if (hardieMode) return [...JAMES_HARDIE_COLORS];
+    if (gentekMode) return [...GENTEK_SAMPLE_COLORS];
+    return GENERIC_SWATCHES.map((hex) => ({ name: "Custom swatch", hex }));
+  }, [hardieMode, gentekMode]);
+
+  const tabRateOptions = useMemo(
+    () =>
+      pricingItems
+        .filter((item) => matchesTab(item, tab))
+        .sort((a, b) => a.item.localeCompare(b.item)),
+    [pricingItems, tab],
+  );
+
+  useEffect(() => {
+    if (!tabRateOptions.length) {
+      setSelectedRateItem("");
+      return;
+    }
+    setSelectedRateItem((prev) =>
+      prev && tabRateOptions.some((item) => item.item === prev) ? prev : tabRateOptions[0].item,
+    );
+  }, [tabRateOptions]);
+
+  const scopedAreaSqFt = Math.max(0, safeNumber(wallWidthFt) * safeNumber(wallHeightFt) * safeNumber(wallCount, 1));
+
+  const estimatedQuantityForUnit = useCallback(
+    (unitRaw: string) => {
+      const unit = unitRaw.trim().toLowerCase();
+      if (unit === "sq") return scopedAreaSqFt / 100;
+      if (unit === "ft") return Math.max(0, safeNumber(linearFeet));
+      if (unit === "door" || unit === "pair" || unit === "pc") return Math.max(0, safeNumber(openingCount, 1));
+      return 1;
+    },
+    [linearFeet, openingCount, scopedAreaSqFt],
+  );
+
+  const estimateSubtotal = useMemo(
+    () => estimateLines.reduce((sum, line) => sum + line.unitRate * line.quantity, 0),
+    [estimateLines],
+  );
+  const estimateWaste = useMemo(
+    () =>
+      estimateLines.reduce(
+        (sum, line) => sum + line.unitRate * line.quantity * parseWasteRate(line.wasteFactor),
+        0,
+      ),
+    [estimateLines],
+  );
+  const estimateTotal = estimateSubtotal + estimateWaste;
+
+  const estimateSummaryBlock = useMemo(() => {
+    if (!estimateLines.length) return "";
+    const lines = [
+      "",
+      "── ESTIMATE PREVIEW (LABOUR) ──",
+      `Assumptions: ${safeNumber(wallWidthFt)}ft x ${safeNumber(wallHeightFt)}ft x ${safeNumber(wallCount, 1)} wall(s), ${safeNumber(linearFeet)} linear ft, ${safeNumber(openingCount, 1)} opening(s)`,
+      ...estimateLines.map((line) => {
+        const subtotal = line.unitRate * line.quantity;
+        const waste = subtotal * parseWasteRate(line.wasteFactor);
+        return `${line.item}: ${line.quantity.toFixed(2)} ${line.coverage.toUpperCase()} @ ${formatMoney(line.unitRate)} = ${formatMoney(subtotal + waste)} (incl. ${line.wasteFactor || "0%"})`;
+      }),
+      `Subtotal: ${formatMoney(estimateSubtotal)}`,
+      `Waste allowance: ${formatMoney(estimateWaste)}`,
+      `Estimated labour total: ${formatMoney(estimateTotal)}`,
+    ];
+    return lines.join("\n");
+  }, [
+    estimateLines,
+    estimateSubtotal,
+    estimateTotal,
+    estimateWaste,
+    linearFeet,
+    openingCount,
+    wallCount,
+    wallHeightFt,
+    wallWidthFt,
+  ]);
 
   const summary = useMemo(() => {
     const lines: string[] = [
@@ -154,6 +316,7 @@ export function ExteriorDesigner() {
       coastalMode
         ? "── COASTAL NS ── Prioritize marine-grade hardware, high DP glazing, salt-tolerant cladding where applicable."
         : "",
+      estimateSummaryBlock,
       "",
       "Please prepare a quote from these selections (subject to site measure & code).",
     ];
@@ -180,12 +343,43 @@ export function ExteriorDesigner() {
     smartLock,
     coastalMode,
     thermalBreakNote,
+    estimateSummaryBlock,
   ]);
+
+  const addEstimateLine = useCallback(() => {
+    const source = tabRateOptions.find((item) => item.item === selectedRateItem);
+    if (!source) return;
+    const unitRate = parseRate(source.cost);
+    if (unitRate <= 0) return;
+    setEstimateLines((prev) => {
+      if (prev.some((line) => line.item === source.item)) return prev;
+      return [
+        ...prev,
+        {
+          item: source.item,
+          coverage: source.coverage,
+          cost: source.cost,
+          wasteFactor: source.wasteFactor,
+          unitRate,
+          quantity: Math.max(0.01, estimatedQuantityForUnit(source.coverage)),
+        },
+      ];
+    });
+  }, [estimatedQuantityForUnit, selectedRateItem, tabRateOptions]);
+
+  const applyDimensionQuantities = useCallback(() => {
+    setEstimateLines((prev) =>
+      prev.map((line) => ({
+        ...line,
+        quantity: Math.max(0.01, estimatedQuantityForUnit(line.coverage)),
+      })),
+    );
+  }, [estimatedQuantityForUnit]);
 
   const applyToQuote = useCallback(() => {
     try {
       sessionStorage.setItem(
-        STORAGE_KEY,
+        QUOTE_STORAGE_KEY,
         JSON.stringify({
           summary,
           tab,
@@ -201,15 +395,6 @@ export function ExteriorDesigner() {
     document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
     window.dispatchEvent(new Event("seaside-quote-prefill"));
   }, [summary, tab, sidingMaterial, sidingProfile, windowStyle, doorSystem]);
-
-  const hardieMode = sidingMaterial === "fiber-cement-hardie";
-  const gentekMode = sidingMaterial === "premium-vinyl";
-
-  const sidingPalette = useMemo(() => {
-    if (hardieMode) return [...JAMES_HARDIE_COLORS];
-    if (gentekMode) return [...GENTEK_SAMPLE_COLORS];
-    return GENERIC_SWATCHES.map((hex) => ({ name: "Custom swatch", hex }));
-  }, [hardieMode, gentekMode]);
 
   return (
     <section
@@ -718,6 +903,185 @@ export function ExteriorDesigner() {
                 </label>
               </div>
             ) : null}
+
+            <div className="rounded-lg border border-base-black/10 bg-base-white p-4 sm:p-5">
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-base-black/70">
+                Estimate builder
+              </h3>
+              <p className="mt-2 text-xs text-base-black/55">
+                Add labour line items from the current tab, enter dimensions, then apply quantities.
+                <strong className="text-base-black"> SQ = 100 sq ft</strong>.
+              </p>
+
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                <label className="text-xs text-base-black/60">
+                  Wall width (ft)
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    value={wallWidthFt}
+                    onChange={(e) => setWallWidthFt(e.target.value)}
+                    className="mt-1 w-full rounded-md border border-base-black/15 bg-base-white px-2.5 py-2 text-sm"
+                  />
+                </label>
+                <label className="text-xs text-base-black/60">
+                  Wall height (ft)
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    value={wallHeightFt}
+                    onChange={(e) => setWallHeightFt(e.target.value)}
+                    className="mt-1 w-full rounded-md border border-base-black/15 bg-base-white px-2.5 py-2 text-sm"
+                  />
+                </label>
+                <label className="text-xs text-base-black/60">
+                  Wall count
+                  <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    value={wallCount}
+                    onChange={(e) => setWallCount(e.target.value)}
+                    className="mt-1 w-full rounded-md border border-base-black/15 bg-base-white px-2.5 py-2 text-sm"
+                  />
+                </label>
+              </div>
+
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <label className="text-xs text-base-black/60">
+                  Linear feet (for ft services)
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    value={linearFeet}
+                    onChange={(e) => setLinearFeet(e.target.value)}
+                    className="mt-1 w-full rounded-md border border-base-black/15 bg-base-white px-2.5 py-2 text-sm"
+                  />
+                </label>
+                <label className="text-xs text-base-black/60">
+                  Openings count (doors/pairs/pcs)
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={openingCount}
+                    onChange={(e) => setOpeningCount(e.target.value)}
+                    className="mt-1 w-full rounded-md border border-base-black/15 bg-base-white px-2.5 py-2 text-sm"
+                  />
+                </label>
+              </div>
+
+              <p className="mt-3 text-[11px] text-base-black/55">
+                Derived area: <strong className="text-base-black">{scopedAreaSqFt.toFixed(1)} sq ft</strong>{" "}
+                ({(scopedAreaSqFt / 100).toFixed(2)} sq)
+              </p>
+
+              <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                <select
+                  value={selectedRateItem}
+                  onChange={(e) => setSelectedRateItem(e.target.value)}
+                  className="w-full rounded-md border border-base-black/15 bg-base-white px-3 py-2 text-sm"
+                >
+                  {tabRateOptions.length ? (
+                    tabRateOptions.map((item) => (
+                      <option key={item.item} value={item.item}>
+                        {item.item} ({item.coverage.toUpperCase()}) - {item.cost}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="">No matching pricing lines for this tab</option>
+                  )}
+                </select>
+                <button
+                  type="button"
+                  onClick={addEstimateLine}
+                  disabled={!tabRateOptions.length}
+                  className="rounded-md bg-base-black px-4 py-2 text-sm font-semibold text-base-white disabled:opacity-50"
+                >
+                  Add line item
+                </button>
+                <button
+                  type="button"
+                  onClick={applyDimensionQuantities}
+                  disabled={!estimateLines.length}
+                  className="rounded-md border border-base-black/15 bg-base-white px-4 py-2 text-sm font-semibold text-base-black disabled:opacity-50"
+                >
+                  Apply dimensions
+                </button>
+              </div>
+
+              {estimateLines.length ? (
+                <div className="mt-4 space-y-2">
+                  {estimateLines.map((line) => {
+                    const lineSubtotal = line.unitRate * line.quantity;
+                    const lineWaste = lineSubtotal * parseWasteRate(line.wasteFactor);
+                    return (
+                      <div
+                        key={line.item}
+                        className="grid gap-2 rounded-md border border-base-black/10 bg-zinc-50 p-3 sm:grid-cols-[1fr_auto_auto_auto]"
+                      >
+                        <div>
+                          <p className="text-sm font-semibold text-base-black">{line.item}</p>
+                          <p className="text-[11px] text-base-black/55">
+                            {line.coverage.toUpperCase()} · Rate {line.cost} · Waste {line.wasteFactor || "0%"}
+                          </p>
+                        </div>
+                        <label className="text-xs text-base-black/60">
+                          Qty
+                          <input
+                            type="number"
+                            min="0.01"
+                            step="0.01"
+                            value={line.quantity}
+                            onChange={(e) => {
+                              const next = Math.max(0.01, safeNumber(e.target.value, 0.01));
+                              setEstimateLines((prev) =>
+                                prev.map((p) => (p.item === line.item ? { ...p, quantity: next } : p)),
+                              );
+                            }}
+                            className="mt-1 w-24 rounded-md border border-base-black/15 bg-base-white px-2 py-1.5 text-sm"
+                          />
+                        </label>
+                        <div className="self-end pb-1 text-sm font-semibold text-primary-aqua">
+                          {formatMoney(lineSubtotal + lineWaste)}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setEstimateLines((prev) => prev.filter((p) => p.item !== line.item))
+                          }
+                          className="self-end pb-1 text-xs font-semibold uppercase tracking-wide text-base-black/55 transition hover:text-red-700"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    );
+                  })}
+
+                  <div className="rounded-md border border-base-black/10 bg-base-white p-3 text-sm">
+                    <div className="flex items-center justify-between">
+                      <span className="text-base-black/70">Subtotal</span>
+                      <span className="font-semibold text-base-black">{formatMoney(estimateSubtotal)}</span>
+                    </div>
+                    <div className="mt-1 flex items-center justify-between">
+                      <span className="text-base-black/70">Waste allowance</span>
+                      <span className="font-semibold text-base-black">{formatMoney(estimateWaste)}</span>
+                    </div>
+                    <div className="mt-2 flex items-center justify-between border-t border-base-black/10 pt-2">
+                      <span className="font-semibold text-base-black">Estimated labour total</span>
+                      <span className="text-base font-bold text-primary-aqua">{formatMoney(estimateTotal)}</span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <p className="mt-4 text-xs text-base-black/55">
+                  No estimate lines added yet. Choose a rate line and click <strong>Add line item</strong>.
+                </p>
+              )}
+            </div>
 
             <button
               type="button"

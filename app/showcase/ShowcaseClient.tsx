@@ -7,51 +7,169 @@ import {
   ArrowRight,
   Instagram,
   Linkedin,
+  Maximize2,
   Menu,
   Search,
+  X,
   Youtube,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { JOB_SHOWCASE_IMAGES } from "@/lib/jobShowcaseImages";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { JOB_SHOWCASE_IMAGES, type JobShowcaseImage } from "@/lib/jobShowcaseImages";
 import { withBasePath } from "@/lib/withBasePath";
 import "./showcase.css";
 
-const HERO_IMAGES = JOB_SHOWCASE_IMAGES.slice(0, 3);
-const FEATURED_GRID_IMAGES = JOB_SHOWCASE_IMAGES.slice(3, 15);
+const HERO_1483 =
+  JOB_SHOWCASE_IMAGES.find((image) => image.src.src.toLowerCase().includes("img_1483")) ??
+  JOB_SHOWCASE_IMAGES[0];
+const HERO_SECONDARY = JOB_SHOWCASE_IMAGES[18] ?? JOB_SHOWCASE_IMAGES[0];
+const HERO_TERTIARY = JOB_SHOWCASE_IMAGES[32] ?? JOB_SHOWCASE_IMAGES[0];
 const TEAM_IMAGE = JOB_SHOWCASE_IMAGES[15] ?? JOB_SHOWCASE_IMAGES[0];
+const SERVICE_AREA_IMAGE = JOB_SHOWCASE_IMAGES[10] ?? JOB_SHOWCASE_IMAGES[0];
+
+type ShowcaseCategory = "All" | "Siding" | "Trim & Capping" | "Doors & Windows" | "Full Exterior";
+
+type ShowcaseGalleryItem = {
+  image: JobShowcaseImage;
+  category: Exclude<ShowcaseCategory, "All">;
+  title: string;
+  detail: string;
+};
+
+function makeGalleryItem(
+  index: number,
+  category: ShowcaseGalleryItem["category"],
+  title: string,
+  detail: string,
+): ShowcaseGalleryItem {
+  return {
+    image: JOB_SHOWCASE_IMAGES[index] ?? JOB_SHOWCASE_IMAGES[0],
+    category,
+    title,
+    detail,
+  };
+}
+
+const GALLERY_CATEGORIES: ShowcaseCategory[] = [
+  "All",
+  "Siding",
+  "Trim & Capping",
+  "Doors & Windows",
+  "Full Exterior",
+];
+
+const GALLERY_ITEMS: ShowcaseGalleryItem[] = [
+  makeGalleryItem(
+    4,
+    "Siding",
+    "Featured coastal siding scope (IMG_1483)",
+    "Straight courses, clean transitions, and durable finish strategy for Atlantic conditions.",
+  ),
+  makeGalleryItem(
+    6,
+    "Siding",
+    "Board-and-batten elevation refresh",
+    "Vertical profile alignment with tidy terminations at trim and flashing points.",
+  ),
+  makeGalleryItem(
+    7,
+    "Siding",
+    "Canexcel-style cladding install",
+    "Consistent exposure and fastening layout across the complete wall section.",
+  ),
+  makeGalleryItem(
+    9,
+    "Trim & Capping",
+    "Soffit and fascia detail finish",
+    "Edge work completed with crisp lines and weather-managed transitions.",
+  ),
+  makeGalleryItem(
+    12,
+    "Trim & Capping",
+    "Exterior trim correction package",
+    "Rebuilt boards and caps for stronger moisture control and visual consistency.",
+  ),
+  makeGalleryItem(
+    22,
+    "Trim & Capping",
+    "Flashing and capping upgrade",
+    "Precision cap bends and layered flashing strategy around key penetrations.",
+  ),
+  makeGalleryItem(
+    10,
+    "Doors & Windows",
+    "Entry surround capping",
+    "Refined door perimeter details with durable protection at exposed edges.",
+  ),
+  makeGalleryItem(
+    14,
+    "Doors & Windows",
+    "Window and opening refinements",
+    "Balanced reveal work with weatherproofing-focused trim and cap sequencing.",
+  ),
+  makeGalleryItem(
+    19,
+    "Doors & Windows",
+    "Garage and opening trim package",
+    "Consistent finish language applied across multiple openings and facade elements.",
+  ),
+  makeGalleryItem(
+    24,
+    "Full Exterior",
+    "Whole-home envelope update",
+    "Siding, trim, and accessory scope coordinated as one complete exterior phase.",
+  ),
+  makeGalleryItem(
+    33,
+    "Full Exterior",
+    "Facade modernization",
+    "Full elevation refresh designed for curb appeal and long-service performance.",
+  ),
+  makeGalleryItem(
+    36,
+    "Full Exterior",
+    "Coastal exterior overhaul",
+    "Integrated system update tuned for wind, moisture, and seasonal cycling.",
+  ),
+];
 
 /** Showcase hero slides sourced from completed Seaside projects. */
 const SLIDES = [
   {
-    image: HERO_IMAGES[0]?.src ?? TEAM_IMAGE.src,
-    eyebrow: "Coastal residential",
-    title: "Precision and craft for Halifax & Nova Scotia homes",
+    image: HERO_1483.src,
+    eyebrow: "Featured project · IMG_1483",
+    title: "Coastal siding craftsmanship with clean, durable lines",
     href: "/#contact",
   },
   {
-    image: HERO_IMAGES[1]?.src ?? TEAM_IMAGE.src,
-    eyebrow: "Exteriors & outdoor living",
-    title: "Decks, siding, windows, and doors built for Atlantic weather",
+    image: HERO_SECONDARY.src,
+    eyebrow: "Openings, trim, and detail work",
+    title: "Precision capping and finish carpentry around windows and doors",
     href: "/#exterior-design",
   },
   {
-    image: HERO_IMAGES[2]?.src ?? TEAM_IMAGE.src,
-    eyebrow: "Built to last",
-    title: "Resilient details for salt air, wind, and coastal seasons",
+    image: HERO_TERTIARY.src,
+    eyebrow: "Full envelope upgrades",
+    title: "Complete exterior packages built for Halifax weather cycles",
     href: "/#about",
   },
 ] as const;
 
 const TAB_LABELS = [
-  { n: "01", label: "Coastal homes" },
-  { n: "02", label: "Exteriors & decks" },
-  { n: "03", label: "Durability" },
+  { n: "01", label: "Featured siding" },
+  { n: "02", label: "Trim details" },
+  { n: "03", label: "Full exterior scope" },
 ] as const;
 
 export function ShowcaseClient() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [navSolid, setNavSolid] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<ShowcaseCategory>("All");
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
+  const filteredGallery = useMemo(() => {
+    if (activeCategory === "All") return GALLERY_ITEMS;
+    return GALLERY_ITEMS.filter((item) => item.category === activeCategory);
+  }, [activeCategory]);
 
   useEffect(() => {
     const t = setInterval(() => {
@@ -89,6 +207,33 @@ export function ShowcaseClient() {
     root.querySelectorAll(".showcase-reveal, .showcase-map-section").forEach((el) => obs.observe(el));
     return () => obs.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+    if (!filteredGallery.length) {
+      setLightboxIndex(null);
+      return;
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setLightboxIndex(null);
+      } else if (event.key === "ArrowRight") {
+        setLightboxIndex((prev) =>
+          prev === null ? 0 : (prev + 1) % filteredGallery.length,
+        );
+      } else if (event.key === "ArrowLeft") {
+        setLightboxIndex((prev) =>
+          prev === null ? 0 : (prev - 1 + filteredGallery.length) % filteredGallery.length,
+        );
+      }
+    };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [filteredGallery.length, lightboxIndex]);
 
   return (
     <div ref={rootRef} className="showcase-root scroll-smooth bg-white text-slate-900">
@@ -305,12 +450,11 @@ export function ShowcaseClient() {
         <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-12">
           <div className="group relative aspect-video overflow-hidden rounded-sm bg-slate-900 lg:col-span-8">
             <Image
-              src="https://images.unsplash.com/photo-1526772662000-3f88f10405ff?auto=format&fit=crop&w=1600&q=80"
-              alt="Map of Atlantic Canada"
+              src={SERVICE_AREA_IMAGE.src}
+              alt="Seaside project within Halifax and Nova Scotia service area"
               fill
               className="object-cover opacity-30 grayscale transition-all duration-1000 group-hover:scale-105"
               sizes="(max-width: 1024px) 100vw, 66vw"
-              unoptimized
             />
             <div
               className="showcase-map-dot bg-[var(--sea-accent)]"
@@ -352,12 +496,12 @@ export function ShowcaseClient() {
       <section className="relative bg-white px-8 py-32 md:px-24">
         <div className="grid grid-cols-1 items-center gap-20 lg:grid-cols-2">
           <div className="showcase-reveal">
-            <p className="mb-6 text-xs font-bold uppercase tracking-widest text-slate-400">Our team</p>
-            <h2 className="mb-8 text-5xl font-extrabold text-slate-900">Invested in your build</h2>
+            <p className="mb-6 text-xs font-bold uppercase tracking-widest text-slate-400">How we deliver</p>
+            <h2 className="mb-8 text-5xl font-extrabold text-slate-900">Field execution with finish-level detail</h2>
             <p className="mb-12 text-lg text-slate-600">
-              Seaside is a hands-on crew: site coordination, carpentry, and exterior packages that respect
-              your timeline and your neighbourhood. We show up, we communicate, and we stand behind the
-              work.
+              Every scope in this gallery reflects our process: inspect the substrate, protect critical
+              transitions, and finish each elevation with alignment and weather durability in mind. The same
+              standards carry across siding, trim, openings, and full exterior packages.
             </p>
             <div className="flex items-center gap-12 border-t border-slate-100 pt-12">
               <div>
@@ -390,11 +534,10 @@ export function ShowcaseClient() {
             <div className="relative aspect-[4/5] w-full overflow-hidden showcase-owner-mask">
               <Image
                 src={TEAM_IMAGE.src}
-                alt="Construction professionals at work"
+                alt="Seaside exterior project showing precision field execution"
                 fill
                 className="object-cover transition-transform duration-1000 hover:scale-105"
                 sizes="(max-width: 1024px) 100vw, 50vw"
-                unoptimized
               />
             </div>
             <div className="absolute -right-8 bottom-20 h-32 w-32 bg-[var(--sea-accent)] showcase-clip-wing-tr [transform:translateX(0)]" />
@@ -407,7 +550,10 @@ export function ShowcaseClient() {
         <div className="showcase-reveal mb-16 flex flex-col items-end justify-between gap-6 sm:flex-row">
           <div>
             <p className="mb-4 text-xs font-bold uppercase tracking-widest text-slate-400">Completed projects</p>
-            <h2 className="text-4xl font-extrabold">From the Seaside gallery</h2>
+            <h2 className="text-4xl font-extrabold">Browse projects by scope</h2>
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-slate-600">
+              Filter by service category and open any image in fullscreen for a closer look at field details.
+            </p>
           </div>
           <div className="flex flex-wrap gap-6">
             <Link
@@ -425,36 +571,145 @@ export function ShowcaseClient() {
           </div>
         </div>
 
+        <div className="showcase-reveal mb-10 flex flex-wrap gap-3">
+          {GALLERY_CATEGORIES.map((category) => (
+            <button
+              key={category}
+              type="button"
+              onClick={() => {
+                setActiveCategory(category);
+                setLightboxIndex(null);
+              }}
+              className={`rounded-sm border px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] transition ${
+                category === activeCategory
+                  ? "border-teal-900 bg-teal-900 text-white"
+                  : "border-slate-300 bg-white text-slate-700 hover:border-teal-900 hover:text-teal-900"
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-          {FEATURED_GRID_IMAGES.map((item, idx) => (
+          {filteredGallery.map((item, idx) => (
             <div
-              key={`${item.alt}-${idx}`}
+              key={`${item.title}-${idx}`}
               className="showcase-reveal group"
               style={{ transitionDelay: `${idx * 80}ms` }}
             >
               <div className="relative mb-8 aspect-video overflow-hidden bg-slate-300">
                 <Image
-                  src={item.src}
-                  alt={item.alt}
+                  src={item.image.src}
+                  alt={item.image.alt}
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                   sizes="(max-width: 768px) 100vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-teal-900/40 opacity-0 transition-opacity group-hover:opacity-100" />
-                <div className="absolute left-4 top-4 bg-[var(--sea-accent)] px-3 py-1 text-[10px] font-bold uppercase text-slate-900">
-                  Seaside project
-                </div>
+                <span className="absolute left-4 top-4 bg-[var(--sea-accent)] px-3 py-1 text-[10px] font-bold uppercase text-slate-900">
+                  {item.category}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setLightboxIndex(idx)}
+                  className="absolute bottom-4 right-4 inline-flex items-center gap-2 rounded-sm bg-white/95 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-900 opacity-0 transition-opacity hover:bg-white group-hover:opacity-100"
+                  aria-label={`Open ${item.title} fullscreen`}
+                >
+                  <Maximize2 className="h-3.5 w-3.5" />
+                  Fullscreen
+                </button>
               </div>
               <h3 className="text-2xl font-bold leading-tight transition-colors group-hover:text-teal-900">
-                Exterior craftsmanship in the field
+                {item.title}
               </h3>
-              <p className="mt-6 text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                Halifax | HRM | Coastal Nova Scotia
+              <p className="mt-4 text-sm leading-relaxed text-slate-600">
+                {item.detail}
+              </p>
+              <p className="mt-5 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                {item.category} | Halifax | HRM | Coastal Nova Scotia
               </p>
             </div>
           ))}
         </div>
       </section>
+
+      {lightboxIndex !== null && filteredGallery[lightboxIndex] ? (
+        <div
+          className="fixed inset-0 z-[80] bg-slate-950/95 p-4 md:p-8"
+          onClick={() => setLightboxIndex(null)}
+        >
+          <div
+            className="mx-auto flex h-full w-full max-w-7xl flex-col"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mb-4 flex items-start justify-between gap-4 text-white">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--sea-accent)]">
+                  {filteredGallery[lightboxIndex].category}
+                </p>
+                <h3 className="mt-2 text-xl font-bold md:text-2xl">
+                  {filteredGallery[lightboxIndex].title}
+                </h3>
+                <p className="mt-2 max-w-3xl text-sm text-white/75">
+                  {filteredGallery[lightboxIndex].detail}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setLightboxIndex(null)}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white transition hover:bg-white/10"
+                aria-label="Close fullscreen gallery"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="relative min-h-0 flex-1 overflow-hidden rounded-sm border border-white/10 bg-slate-900">
+              <Image
+                src={filteredGallery[lightboxIndex].image.src}
+                alt={filteredGallery[lightboxIndex].image.alt}
+                fill
+                className="object-contain"
+                sizes="100vw"
+                priority
+              />
+            </div>
+
+            <div className="mt-4 flex items-center justify-between text-white">
+              <button
+                type="button"
+                onClick={() =>
+                  setLightboxIndex((prev) =>
+                    prev === null ? 0 : (prev - 1 + filteredGallery.length) % filteredGallery.length,
+                  )
+                }
+                className="inline-flex items-center gap-2 rounded-sm border border-white/20 px-3 py-2 text-xs font-bold uppercase tracking-[0.12em] transition hover:bg-white/10"
+                aria-label="Previous image"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Previous
+              </button>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/70">
+                {lightboxIndex + 1} of {filteredGallery.length}
+              </p>
+              <button
+                type="button"
+                onClick={() =>
+                  setLightboxIndex((prev) =>
+                    prev === null ? 0 : (prev + 1) % filteredGallery.length,
+                  )
+                }
+                className="inline-flex items-center gap-2 rounded-sm border border-white/20 px-3 py-2 text-xs font-bold uppercase tracking-[0.12em] transition hover:bg-white/10"
+                aria-label="Next image"
+              >
+                Next
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {/* Footer */}
       <footer className="relative overflow-hidden bg-[var(--sea-dark)] px-8 pb-16 pt-32 text-white md:px-24">
