@@ -34,14 +34,11 @@ type ShowcaseGalleryItem = {
   detail: string;
 };
 
-const GALLERY_ITEMS: ShowcaseGalleryItem[] = JOB_SHOWCASE_IMAGES.map((image, index) => {
-  const fileStem = image.src.src.split("/").pop()?.split(".")[0] ?? `project-${index + 1}`;
-  return {
-    image,
-    title: `${fileStem} completed project`,
-    detail: image.alt,
-  };
-});
+const GALLERY_ITEMS: ShowcaseGalleryItem[] = JOB_SHOWCASE_IMAGES.map((image) => ({
+  image,
+  title: image.title,
+  detail: image.alt,
+}));
 
 /** Showcase hero slides sourced from completed Seaside projects. */
 const SLIDES = [
@@ -480,7 +477,7 @@ export function ShowcaseClient() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           {GALLERY_ITEMS.map((item, idx) => (
             <div
-              key={`${item.title}-${idx}`}
+              key={`showcase-gallery-${idx}`}
               className="showcase-reveal group"
               style={{ transitionDelay: `${idx * 80}ms` }}
             >
