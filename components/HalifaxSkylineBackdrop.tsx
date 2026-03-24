@@ -241,7 +241,7 @@ export function HalifaxSkylineBackdrop({
         <svg
           className="h-full w-full"
           viewBox="0 0 1200 200"
-          preserveAspectRatio="xMidYMax meet"
+          preserveAspectRatio="none"
         >
           <defs>
             <linearGradient id={skylineEdgeId} x1="0" y1="0" x2="0" y2="1">
