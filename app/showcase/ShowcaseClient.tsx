@@ -13,7 +13,7 @@ import {
   X,
   Youtube,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { JOB_SHOWCASE_IMAGES, type JobShowcaseImage } from "@/lib/jobShowcaseImages";
 import { withBasePath } from "@/lib/withBasePath";
 import "./showcase.css";
@@ -24,113 +24,24 @@ const HERO_1483 =
 const HERO_SECONDARY = JOB_SHOWCASE_IMAGES[18] ?? JOB_SHOWCASE_IMAGES[0];
 const HERO_TERTIARY = JOB_SHOWCASE_IMAGES[32] ?? JOB_SHOWCASE_IMAGES[0];
 const TEAM_IMAGE = JOB_SHOWCASE_IMAGES[15] ?? JOB_SHOWCASE_IMAGES[0];
-const SERVICE_AREA_IMAGE = JOB_SHOWCASE_IMAGES[10] ?? JOB_SHOWCASE_IMAGES[0];
-
-type ShowcaseCategory = "All" | "Siding" | "Trim & Capping" | "Doors & Windows" | "Full Exterior";
+const SERVICE_AREA_IMAGE =
+  JOB_SHOWCASE_IMAGES.find((image) => image.src.src.toLowerCase().includes("img_2576")) ??
+  JOB_SHOWCASE_IMAGES[0];
 
 type ShowcaseGalleryItem = {
   image: JobShowcaseImage;
-  category: Exclude<ShowcaseCategory, "All">;
   title: string;
   detail: string;
 };
 
-function makeGalleryItem(
-  index: number,
-  category: ShowcaseGalleryItem["category"],
-  title: string,
-  detail: string,
-): ShowcaseGalleryItem {
+const GALLERY_ITEMS: ShowcaseGalleryItem[] = JOB_SHOWCASE_IMAGES.map((image, index) => {
+  const fileStem = image.src.src.split("/").pop()?.split(".")[0] ?? `project-${index + 1}`;
   return {
-    image: JOB_SHOWCASE_IMAGES[index] ?? JOB_SHOWCASE_IMAGES[0],
-    category,
-    title,
-    detail,
+    image,
+    title: `${fileStem} completed project`,
+    detail: image.alt,
   };
-}
-
-const GALLERY_CATEGORIES: ShowcaseCategory[] = [
-  "All",
-  "Siding",
-  "Trim & Capping",
-  "Doors & Windows",
-  "Full Exterior",
-];
-
-const GALLERY_ITEMS: ShowcaseGalleryItem[] = [
-  makeGalleryItem(
-    4,
-    "Siding",
-    "Featured coastal siding scope (IMG_1483)",
-    "Straight courses, clean transitions, and durable finish strategy for Atlantic conditions.",
-  ),
-  makeGalleryItem(
-    6,
-    "Siding",
-    "Board-and-batten elevation refresh",
-    "Vertical profile alignment with tidy terminations at trim and flashing points.",
-  ),
-  makeGalleryItem(
-    7,
-    "Siding",
-    "Canexcel-style cladding install",
-    "Consistent exposure and fastening layout across the complete wall section.",
-  ),
-  makeGalleryItem(
-    9,
-    "Trim & Capping",
-    "Soffit and fascia detail finish",
-    "Edge work completed with crisp lines and weather-managed transitions.",
-  ),
-  makeGalleryItem(
-    12,
-    "Trim & Capping",
-    "Exterior trim correction package",
-    "Rebuilt boards and caps for stronger moisture control and visual consistency.",
-  ),
-  makeGalleryItem(
-    22,
-    "Trim & Capping",
-    "Flashing and capping upgrade",
-    "Precision cap bends and layered flashing strategy around key penetrations.",
-  ),
-  makeGalleryItem(
-    10,
-    "Doors & Windows",
-    "Entry surround capping",
-    "Refined door perimeter details with durable protection at exposed edges.",
-  ),
-  makeGalleryItem(
-    14,
-    "Doors & Windows",
-    "Window and opening refinements",
-    "Balanced reveal work with weatherproofing-focused trim and cap sequencing.",
-  ),
-  makeGalleryItem(
-    19,
-    "Doors & Windows",
-    "Garage and opening trim package",
-    "Consistent finish language applied across multiple openings and facade elements.",
-  ),
-  makeGalleryItem(
-    24,
-    "Full Exterior",
-    "Whole-home envelope update",
-    "Siding, trim, and accessory scope coordinated as one complete exterior phase.",
-  ),
-  makeGalleryItem(
-    33,
-    "Full Exterior",
-    "Facade modernization",
-    "Full elevation refresh designed for curb appeal and long-service performance.",
-  ),
-  makeGalleryItem(
-    36,
-    "Full Exterior",
-    "Coastal exterior overhaul",
-    "Integrated system update tuned for wind, moisture, and seasonal cycling.",
-  ),
-];
+});
 
 /** Showcase hero slides sourced from completed Seaside projects. */
 const SLIDES = [
@@ -163,13 +74,8 @@ const TAB_LABELS = [
 export function ShowcaseClient() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [navSolid, setNavSolid] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<ShowcaseCategory>("All");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
-  const filteredGallery = useMemo(() => {
-    if (activeCategory === "All") return GALLERY_ITEMS;
-    return GALLERY_ITEMS.filter((item) => item.category === activeCategory);
-  }, [activeCategory]);
 
   useEffect(() => {
     const t = setInterval(() => {
@@ -210,7 +116,7 @@ export function ShowcaseClient() {
 
   useEffect(() => {
     if (lightboxIndex === null) return;
-    if (!filteredGallery.length) {
+    if (!GALLERY_ITEMS.length) {
       setLightboxIndex(null);
       return;
     }
@@ -219,11 +125,11 @@ export function ShowcaseClient() {
         setLightboxIndex(null);
       } else if (event.key === "ArrowRight") {
         setLightboxIndex((prev) =>
-          prev === null ? 0 : (prev + 1) % filteredGallery.length,
+          prev === null ? 0 : (prev + 1) % GALLERY_ITEMS.length,
         );
       } else if (event.key === "ArrowLeft") {
         setLightboxIndex((prev) =>
-          prev === null ? 0 : (prev - 1 + filteredGallery.length) % filteredGallery.length,
+          prev === null ? 0 : (prev - 1 + GALLERY_ITEMS.length) % GALLERY_ITEMS.length,
         );
       }
     };
@@ -233,7 +139,7 @@ export function ShowcaseClient() {
       document.body.style.overflow = "";
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [filteredGallery.length, lightboxIndex]);
+  }, [lightboxIndex]);
 
   return (
     <div ref={rootRef} className="showcase-root scroll-smooth bg-white text-slate-900">
@@ -550,9 +456,9 @@ export function ShowcaseClient() {
         <div className="showcase-reveal mb-16 flex flex-col items-end justify-between gap-6 sm:flex-row">
           <div>
             <p className="mb-4 text-xs font-bold uppercase tracking-widest text-slate-400">Completed projects</p>
-            <h2 className="text-4xl font-extrabold">Browse projects by scope</h2>
+            <h2 className="text-4xl font-extrabold">From the Seaside gallery</h2>
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-slate-600">
-              Filter by service category and open any image in fullscreen for a closer look at field details.
+              Open any image in fullscreen for a closer look at field details.
             </p>
           </div>
           <div className="flex flex-wrap gap-6">
@@ -571,28 +477,8 @@ export function ShowcaseClient() {
           </div>
         </div>
 
-        <div className="showcase-reveal mb-10 flex flex-wrap gap-3">
-          {GALLERY_CATEGORIES.map((category) => (
-            <button
-              key={category}
-              type="button"
-              onClick={() => {
-                setActiveCategory(category);
-                setLightboxIndex(null);
-              }}
-              className={`rounded-sm border px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] transition ${
-                category === activeCategory
-                  ? "border-teal-900 bg-teal-900 text-white"
-                  : "border-slate-300 bg-white text-slate-700 hover:border-teal-900 hover:text-teal-900"
-              }`}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-          {filteredGallery.map((item, idx) => (
+          {GALLERY_ITEMS.map((item, idx) => (
             <div
               key={`${item.title}-${idx}`}
               className="showcase-reveal group"
@@ -607,9 +493,6 @@ export function ShowcaseClient() {
                   sizes="(max-width: 768px) 100vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-teal-900/40 opacity-0 transition-opacity group-hover:opacity-100" />
-                <span className="absolute left-4 top-4 bg-[var(--sea-accent)] px-3 py-1 text-[10px] font-bold uppercase text-slate-900">
-                  {item.category}
-                </span>
                 <button
                   type="button"
                   onClick={() => setLightboxIndex(idx)}
@@ -627,14 +510,14 @@ export function ShowcaseClient() {
                 {item.detail}
               </p>
               <p className="mt-5 text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                {item.category} | Halifax | HRM | Coastal Nova Scotia
+                Halifax | HRM | Coastal Nova Scotia
               </p>
             </div>
           ))}
         </div>
       </section>
 
-      {lightboxIndex !== null && filteredGallery[lightboxIndex] ? (
+      {lightboxIndex !== null && GALLERY_ITEMS[lightboxIndex] ? (
         <div
           className="fixed inset-0 z-[80] bg-slate-950/95 p-4 md:p-8"
           onClick={() => setLightboxIndex(null)}
@@ -646,13 +529,13 @@ export function ShowcaseClient() {
             <div className="mb-4 flex items-start justify-between gap-4 text-white">
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--sea-accent)]">
-                  {filteredGallery[lightboxIndex].category}
+                  Completed project
                 </p>
                 <h3 className="mt-2 text-xl font-bold md:text-2xl">
-                  {filteredGallery[lightboxIndex].title}
+                  {GALLERY_ITEMS[lightboxIndex].title}
                 </h3>
                 <p className="mt-2 max-w-3xl text-sm text-white/75">
-                  {filteredGallery[lightboxIndex].detail}
+                  {GALLERY_ITEMS[lightboxIndex].detail}
                 </p>
               </div>
               <button
@@ -667,8 +550,8 @@ export function ShowcaseClient() {
 
             <div className="relative min-h-0 flex-1 overflow-hidden rounded-sm border border-white/10 bg-slate-900">
               <Image
-                src={filteredGallery[lightboxIndex].image.src}
-                alt={filteredGallery[lightboxIndex].image.alt}
+                src={GALLERY_ITEMS[lightboxIndex].image.src}
+                alt={GALLERY_ITEMS[lightboxIndex].image.alt}
                 fill
                 className="object-contain"
                 sizes="100vw"
@@ -681,7 +564,7 @@ export function ShowcaseClient() {
                 type="button"
                 onClick={() =>
                   setLightboxIndex((prev) =>
-                    prev === null ? 0 : (prev - 1 + filteredGallery.length) % filteredGallery.length,
+                    prev === null ? 0 : (prev - 1 + GALLERY_ITEMS.length) % GALLERY_ITEMS.length,
                   )
                 }
                 className="inline-flex items-center gap-2 rounded-sm border border-white/20 px-3 py-2 text-xs font-bold uppercase tracking-[0.12em] transition hover:bg-white/10"
@@ -691,13 +574,13 @@ export function ShowcaseClient() {
                 Previous
               </button>
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/70">
-                {lightboxIndex + 1} of {filteredGallery.length}
+                {lightboxIndex + 1} of {GALLERY_ITEMS.length}
               </p>
               <button
                 type="button"
                 onClick={() =>
                   setLightboxIndex((prev) =>
-                    prev === null ? 0 : (prev + 1) % filteredGallery.length,
+                    prev === null ? 0 : (prev + 1) % GALLERY_ITEMS.length,
                   )
                 }
                 className="inline-flex items-center gap-2 rounded-sm border border-white/20 px-3 py-2 text-xs font-bold uppercase tracking-[0.12em] transition hover:bg-white/10"
