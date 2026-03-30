@@ -1,26 +1,12 @@
-import { About } from "@/components/sections/About";
-import { Contact } from "@/components/sections/Contact";
-import { ExteriorDesigner } from "@/components/sections/ExteriorDesigner";
-import { Hero } from "@/components/sections/Hero";
-import { JobShowcaseGallery } from "@/components/sections/JobShowcaseGallery";
-import { PricingHighlight } from "@/components/sections/PricingHighlight";
-import { Services } from "@/components/sections/Services";
-import { ValueProposition } from "@/components/sections/ValueProposition";
-import { getPricingItems } from "@/lib/pricingData";
+import type { Metadata } from "next";
+import { AudienceGate } from "@/components/landing/AudienceGate";
 
-export default async function HomePage() {
-  const pricingItems = await getPricingItems();
+export const metadata: Metadata = {
+  title: "Seaside Contracting | Residential & Commercial",
+  description:
+    "Halifax and coastal Nova Scotia contracting—choose a residential or commercial path for exteriors, renovations, and envelope work.",
+};
 
-  return (
-    <>
-      <Hero />
-      <ValueProposition />
-      <ExteriorDesigner pricingItems={pricingItems} />
-      <Services />
-      <JobShowcaseGallery />
-      <PricingHighlight />
-      <About />
-      <Contact />
-    </>
-  );
+export default function HomePage() {
+  return <AudienceGate />;
 }

@@ -6,13 +6,38 @@ import { HalifaxSkylineBackdrop } from "@/components/HalifaxSkylineBackdrop";
 import { easeArchitectural } from "@/components/motion/easing";
 import { useHalifaxAmbient } from "@/hooks/useHalifaxAmbient";
 import { usePrefersReducedMotion } from "@/components/motion/usePrefersReducedMotion";
+import type { ProjectAudience } from "@/lib/audience";
 
 const stagger = 0.08;
+
+const heroCopy: Record<
+  ProjectAudience,
+  { headline: string; sub: string; primaryCta: string; secondaryCta: string; tertiary: string }
+> = {
+  residential: {
+    headline: "Precision in every build.",
+    sub: "Modern design and uncompromising craftsmanship for homes on the Atlantic—delivered with the clarity and accountability you expect from a full-service partner.",
+    primaryCta: "Exterior designer",
+    secondaryCta: "Request a consultation",
+    tertiary: "View capabilities",
+  },
+  commercial: {
+    headline: "Exteriors that keep buildings working.",
+    sub: "Envelope upgrades, openings, and durable cladding for Nova Scotia commercial property—planned for access, safety, and minimal disruption to operations.",
+    primaryCta: "Scope your exterior",
+    secondaryCta: "Discuss your project",
+    tertiary: "Capabilities",
+  },
+};
+
+export type HeroProps = {
+  audience: ProjectAudience;
+};
 
 /**
  * Hero — animated Halifax harbour skyline, sky, and water driven by local time + Open-Meteo.
  */
-export function Hero() {
+export function Hero({ audience }: HeroProps) {
   const reduce = usePrefersReducedMotion();
   const {
     timeLabel,
@@ -45,6 +70,9 @@ export function Hero() {
     tempC !== null ? `${tempC}°C` : loading ? "…" : "—",
     weatherError ? "Weather unavailable" : weatherLabelText,
   ].join(" · ");
+
+  const copy = heroCopy[audience];
+  const showcaseHref = `/showcase?audience=${audience}`;
 
   return (
     <section
@@ -90,14 +118,13 @@ export function Hero() {
               variants={item}
               className="mt-4 text-display font-bold text-white drop-shadow-[0_2px_24px_rgba(0,0,0,0.35)]"
             >
-              Precision in every build.
+              {copy.headline}
             </motion.h1>
             <motion.p
               variants={item}
               className="mt-5 max-w-xl text-lg leading-relaxed text-white/90 sm:text-xl"
             >
-              Modern design and uncompromising craftsmanship for homes on the Atlantic—delivered with
-              the clarity and accountability you expect from a full-service partner.
+              {copy.sub}
             </motion.p>
 
             <motion.div
@@ -105,25 +132,25 @@ export function Hero() {
               className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4"
             >
               <Link
-                href="/#exterior-design"
+                href="#exterior-design"
                 className="inline-flex items-center justify-center rounded-sm bg-primary-aqua px-7 py-3.5 text-base font-semibold text-white shadow-lg shadow-black/25 transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-xl"
               >
-                Exterior designer
+                {copy.primaryCta}
               </Link>
               <Link
-                href="/#contact"
+                href="#contact"
                 className="inline-flex items-center justify-center rounded-sm border border-white/40 bg-white/10 px-7 py-3.5 text-base font-semibold text-white backdrop-blur-sm transition-[transform,background-color] duration-300 hover:bg-white/18"
               >
-                Request a consultation
+                {copy.secondaryCta}
               </Link>
               <Link
-                href="/#services"
+                href="#services"
                 className="inline-flex items-center justify-center text-sm font-semibold text-white/85 underline-offset-4 transition-colors hover:text-primary-aqua hover:underline"
               >
-                View capabilities
+                {copy.tertiary}
               </Link>
               <Link
-                href="/showcase"
+                href={showcaseHref}
                 className="inline-flex items-center justify-center rounded-sm border border-white/25 bg-white/5 px-7 py-3.5 text-base font-semibold text-white transition-[transform,background-color] duration-300 hover:border-primary-aqua/60 hover:bg-white/10"
               >
                 Full showcase

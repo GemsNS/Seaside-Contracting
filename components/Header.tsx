@@ -6,20 +6,12 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu, Phone, X } from "lucide-react";
 import { withBasePath } from "@/lib/withBasePath";
-const nav = [
-  { href: "/", label: "Home" },
-  { href: "/showcase", label: "Showcase" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/#exterior-design", label: "Designer" },
-  { href: "/#services", label: "Services" },
-  { href: "/#gallery", label: "Gallery" },
-  { href: "/#about", label: "About" },
-  { href: "/#contact", label: "Contact" },
-];
+import { headerNavForPathname, quoteCtaHref } from "@/lib/siteNav";
 
 export function Header() {
   const pathname = usePathname();
-  const isHome = pathname === "/";
+  const nav = headerNavForPathname(pathname);
+  const isHome = pathname === "/" || pathname === "/residential" || pathname === "/commercial";
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -83,7 +75,7 @@ export function Header() {
 
         <div className="flex items-center gap-3 sm:gap-4">
           <Link
-            href="/#contact"
+            href={quoteCtaHref(pathname)}
             className="hidden rounded-sm bg-primary-aqua px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-92 sm:inline-flex"
           >
             Get a quote
@@ -119,7 +111,7 @@ export function Header() {
               </Link>
             ))}
             <Link
-              href="/#contact"
+              href={quoteCtaHref(pathname)}
               className="mt-2 rounded-sm bg-primary-aqua px-4 py-3 text-center font-semibold text-white"
               onClick={() => setOpen(false)}
             >

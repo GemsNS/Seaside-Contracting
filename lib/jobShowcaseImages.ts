@@ -39,90 +39,244 @@ import IMG_3207 from "@/assets/jobshowcase/IMG_3207.jpg";
 import IMG_3266 from "@/assets/jobshowcase/IMG_3266.jpg";
 import IMAGE_000000 from "@/assets/jobshowcase/image000000.JPG";
 
+/** Tag each asset for residential, commercial, or both galleries (revisit when new photos are added). */
+export type JobShowcaseAudience = "residential" | "commercial" | "both";
+
 export type JobShowcaseImage = {
   src: StaticImageData;
   alt: string;
   /** Short display headline for gallery cards (no camera filenames). */
   title: string;
+  audience: JobShowcaseAudience;
 };
 
 export const JOB_SHOWCASE_IMAGES: JobShowcaseImage[] = [
-  { src: F031DE44, alt: "Completed Seaside Contracting exterior project.", title: "Coastal exterior renovation" },
+  {
+    src: F031DE44,
+    alt: "Completed Seaside Contracting exterior project.",
+    title: "Coastal exterior renovation",
+    audience: "both",
+  },
   {
     src: IMG_0983,
     alt: "Siding and trim installation completed by Seaside Contracting.",
     title: "Siding and trim package",
+    audience: "both",
   },
-  { src: IMG_0984, alt: "Finished residential exterior improvement in Halifax.", title: "Residential exterior refresh" },
-  { src: IMG_1436, alt: "Completed home renovation detail from Seaside Contracting.", title: "Renovation exterior detail" },
+  {
+    src: IMG_0984,
+    alt: "Finished residential exterior improvement in Halifax.",
+    title: "Residential exterior refresh",
+    audience: "residential",
+  },
+  {
+    src: IMG_1436,
+    alt: "Completed home renovation detail from Seaside Contracting.",
+    title: "Renovation exterior detail",
+    audience: "residential",
+  },
   {
     src: IMG_1483,
     alt: "Residential exterior upgrade with clean finish carpentry.",
     title: "Finish carpentry and cladding upgrade",
+    audience: "residential",
   },
-  { src: IMG_1773, alt: "Project showcase photo from a completed Seaside build.", title: "Completed build showcase" },
-  { src: IMG_1774, alt: "Completed cladding and weatherproofing exterior work.", title: "Cladding and weatherproofing" },
-  { src: IMG_1775, alt: "Finalized siding and trim package installation.", title: "Siding and trim installation" },
-  { src: IMG_1776, alt: "Completed wall finish and exterior detail work.", title: "Wall finish and exterior details" },
-  { src: IMG_1841, alt: "Finished home envelope and exterior trim project.", title: "Home envelope and trim" },
+  {
+    src: IMG_1773,
+    alt: "Project showcase photo from a completed Seaside build.",
+    title: "Completed build showcase",
+    audience: "both",
+  },
+  {
+    src: IMG_1774,
+    alt: "Completed cladding and weatherproofing exterior work.",
+    title: "Cladding and weatherproofing",
+    audience: "both",
+  },
+  {
+    src: IMG_1775,
+    alt: "Finalized siding and trim package installation.",
+    title: "Siding and trim installation",
+    audience: "both",
+  },
+  {
+    src: IMG_1776,
+    alt: "Completed wall finish and exterior detail work.",
+    title: "Wall finish and exterior details",
+    audience: "both",
+  },
+  {
+    src: IMG_1841,
+    alt: "Finished home envelope and exterior trim project.",
+    title: "Home envelope and trim",
+    audience: "residential",
+  },
   {
     src: IMG_1849,
     alt: "Completed door and window exterior finishing package.",
     title: "Door and window finishing",
+    audience: "both",
   },
-  { src: IMG_1878, alt: "Craft-focused renovation with polished exterior details.", title: "Craft-focused exterior renovation" },
-  { src: IMG_1886, alt: "Completed residential facade upgrade by Seaside Contracting.", title: "Residential facade upgrade" },
+  {
+    src: IMG_1878,
+    alt: "Craft-focused renovation with polished exterior details.",
+    title: "Craft-focused exterior renovation",
+    audience: "both",
+  },
+  {
+    src: IMG_1886,
+    alt: "Completed residential facade upgrade by Seaside Contracting.",
+    title: "Residential facade upgrade",
+    audience: "residential",
+  },
   {
     src: IMG_1922,
     alt: "Final project photo featuring clean lines and durable finishes.",
     title: "Clean lines and durable finishes",
+    audience: "both",
   },
-  { src: IMG_1923, alt: "Exterior transformation project completed in Nova Scotia.", title: "Full exterior transformation" },
-  { src: IMG_2177, alt: "Completed coastal renovation with durable materials.", title: "Coastal renovation" },
-  { src: IMG_2198, alt: "Finished siding and trim project detail image.", title: "Siding and trim detail" },
-  { src: IMG_2200, alt: "Completed construction project with premium exterior workmanship.", title: "Premium exterior workmanship" },
-  { src: IMG_2203, alt: "Home exterior update completed by Seaside Contracting team.", title: "Whole-home exterior update" },
-  { src: IMG_2244, alt: "Residential project completion photo showing precise detailing.", title: "Precise exterior detailing" },
-  { src: IMG_2257, alt: "Completed exterior package for a Nova Scotia residence.", title: "Complete exterior package" },
-  { src: IMG_2358, alt: "Completed project photo from Seaside Contracting portfolio.", title: "Portfolio exterior completion" },
-  { src: IMG_2545, alt: "Crafted exterior finish and trim work from completed build.", title: "Exterior finish and trim" },
-  { src: IMG_2567, alt: "Completed home improvement project showcasing weather-ready craftsmanship.", title: "Weather-ready craftsmanship" },
-  { src: IMG_2572, alt: "Finalized exterior renovation with modern curb appeal.", title: "Modern curb appeal renovation" },
-  { src: IMG_2576, alt: "Completed residential cladding and trim installation.", title: "Residential cladding and trim" },
-  { src: IMG_2578, alt: "Detailed finish carpentry and exterior project completion.", title: "Finish carpentry completion" },
+  {
+    src: IMG_1923,
+    alt: "Exterior transformation project completed in Nova Scotia.",
+    title: "Full exterior transformation",
+    audience: "both",
+  },
+  {
+    src: IMG_2177,
+    alt: "Completed coastal renovation with durable materials.",
+    title: "Coastal renovation",
+    audience: "both",
+  },
+  {
+    src: IMG_2198,
+    alt: "Finished siding and trim project detail image.",
+    title: "Siding and trim detail",
+    audience: "both",
+  },
+  {
+    src: IMG_2200,
+    alt: "Completed construction project with premium exterior workmanship.",
+    title: "Premium exterior workmanship",
+    audience: "both",
+  },
+  {
+    src: IMG_2203,
+    alt: "Home exterior update completed by Seaside Contracting team.",
+    title: "Whole-home exterior update",
+    audience: "residential",
+  },
+  {
+    src: IMG_2244,
+    alt: "Residential project completion photo showing precise detailing.",
+    title: "Precise exterior detailing",
+    audience: "residential",
+  },
+  {
+    src: IMG_2257,
+    alt: "Completed exterior package for a Nova Scotia residence.",
+    title: "Complete exterior package",
+    audience: "residential",
+  },
+  {
+    src: IMG_2358,
+    alt: "Completed project photo from Seaside Contracting portfolio.",
+    title: "Portfolio exterior completion",
+    audience: "both",
+  },
+  {
+    src: IMG_2545,
+    alt: "Crafted exterior finish and trim work from completed build.",
+    title: "Exterior finish and trim",
+    audience: "both",
+  },
+  {
+    src: IMG_2567,
+    alt: "Completed home improvement project showcasing weather-ready craftsmanship.",
+    title: "Weather-ready craftsmanship",
+    audience: "residential",
+  },
+  {
+    src: IMG_2572,
+    alt: "Finalized exterior renovation with modern curb appeal.",
+    title: "Modern curb appeal renovation",
+    audience: "residential",
+  },
+  {
+    src: IMG_2576,
+    alt: "Completed residential cladding and trim installation.",
+    title: "Residential cladding and trim",
+    audience: "residential",
+  },
+  {
+    src: IMG_2578,
+    alt: "Detailed finish carpentry and exterior project completion.",
+    title: "Finish carpentry completion",
+    audience: "both",
+  },
   {
     src: IMG_2597,
     alt: "Seaside Contracting completed project detail image.",
     title: "Full residential siding overhaul",
+    audience: "residential",
   },
   {
     src: IMG_2598,
     alt: "Completed exterior construction photo from recent job.",
     title: "Bay window and front elevation",
+    audience: "residential",
   },
   {
     src: IMG_2824,
     alt: "Finished renovation showcasing durable siding and trim.",
     title: "Siding detail with service integration",
+    audience: "both",
   },
   {
     src: IMG_2835,
     alt: "Completed project with clean architectural exterior lines.",
     title: "Split-level siding and windows",
+    audience: "residential",
   },
   {
     src: IMG_2836,
     alt: "Nova Scotia residential job completed by Seaside Contracting.",
     title: "Garage and bay window facade",
+    audience: "residential",
   },
   {
     src: IMG_2837,
     alt: "Exterior finishing and detailing from completed home project.",
     title: "Corner siding and trim detail",
+    audience: "both",
   },
-  { src: IMG_2839, alt: "Completed renovation image with high-quality finish standards.", title: "High-quality exterior finish" },
-  { src: IMG_3205, alt: "Completed Seaside project photo featuring custom exterior elements.", title: "Custom exterior elements" },
-  { src: IMG_3207, alt: "Finished build with resilient materials for coastal conditions.", title: "Coastal-durable exterior" },
-  { src: IMG_3266, alt: "Completed construction portfolio image from Seaside Contracting.", title: "Portfolio exterior project" },
-  { src: IMAGE_000000, alt: "Completed job showcase image from Seaside Contracting.", title: "Completed exterior showcase" },
+  {
+    src: IMG_2839,
+    alt: "Completed renovation image with high-quality finish standards.",
+    title: "High-quality exterior finish",
+    audience: "both",
+  },
+  {
+    src: IMG_3205,
+    alt: "Completed Seaside project photo featuring custom exterior elements.",
+    title: "Custom exterior elements",
+    audience: "both",
+  },
+  {
+    src: IMG_3207,
+    alt: "Finished build with resilient materials for coastal conditions.",
+    title: "Coastal-durable exterior",
+    audience: "both",
+  },
+  {
+    src: IMG_3266,
+    alt: "Completed construction portfolio image from Seaside Contracting.",
+    title: "Portfolio exterior project",
+    audience: "both",
+  },
+  {
+    src: IMAGE_000000,
+    alt: "Completed job showcase image from Seaside Contracting.",
+    title: "Completed exterior showcase",
+    audience: "both",
+  },
 ];

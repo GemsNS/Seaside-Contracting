@@ -116,14 +116,6 @@ function matchesTab(item: PricingItem, tab: TabId): boolean {
   return TAB_MATCHERS[tab].some((needle) => haystack.includes(needle));
 }
 
-function formatMoney(value: number): string {
-  return new Intl.NumberFormat("en-CA", {
-    style: "currency",
-    currency: "CAD",
-    maximumFractionDigits: 2,
-  }).format(value);
-}
-
 function safeNumber(value: string, fallback = 0): number {
   const n = Number.parseFloat(value);
   return Number.isFinite(n) ? n : fallback;
@@ -244,47 +236,19 @@ export function ExteriorDesigner({ pricingItems }: ExteriorDesignerProps) {
     [linearFeet, openingCount, scopedAreaSqFt],
   );
 
-  const estimateSubtotal = useMemo(
-    () => estimateLines.reduce((sum, line) => sum + line.unitRate * line.quantity, 0),
-    [estimateLines],
-  );
-  const estimateWaste = useMemo(
-    () =>
-      estimateLines.reduce(
-        (sum, line) => sum + line.unitRate * line.quantity * parseWasteRate(line.wasteFactor),
-        0,
-      ),
-    [estimateLines],
-  );
-  const estimateTotal = estimateSubtotal + estimateWaste;
-
   const estimateSummaryBlock = useMemo(() => {
     if (!estimateLines.length) return "";
     const lines = [
       "",
-      "── ESTIMATE PREVIEW (LABOUR) ──",
+      "── SCOPE LINES (FOR QUOTE REQUEST — NO PUBLIC PRICING) ──",
       `Assumptions: ${safeNumber(wallWidthFt)}ft x ${safeNumber(wallHeightFt)}ft x ${safeNumber(wallCount, 1)} wall(s), ${safeNumber(linearFeet)} linear ft, ${safeNumber(openingCount, 1)} opening(s)`,
       ...estimateLines.map((line) => {
-        const subtotal = line.unitRate * line.quantity;
-        const waste = subtotal * parseWasteRate(line.wasteFactor);
-        return `${line.item}: ${line.quantity.toFixed(2)} ${line.coverage.toUpperCase()} @ ${formatMoney(line.unitRate)} = ${formatMoney(subtotal + waste)} (incl. ${line.wasteFactor || "0%"})`;
+        return `${line.item}: ${line.quantity.toFixed(2)} ${line.coverage.toUpperCase()} (waste factor ${line.wasteFactor || "0%"})`;
       }),
-      `Subtotal: ${formatMoney(estimateSubtotal)}`,
-      `Waste allowance: ${formatMoney(estimateWaste)}`,
-      `Estimated labour total: ${formatMoney(estimateTotal)}`,
+      "Formal pricing is prepared internally after site review.",
     ];
     return lines.join("\n");
-  }, [
-    estimateLines,
-    estimateSubtotal,
-    estimateTotal,
-    estimateWaste,
-    linearFeet,
-    openingCount,
-    wallCount,
-    wallHeightFt,
-    wallWidthFt,
-  ]);
+  }, [estimateLines, linearFeet, openingCount, wallCount, wallHeightFt, wallWidthFt]);
 
   const summary = useMemo(() => {
     const lines: string[] = [
@@ -415,8 +379,9 @@ export function ExteriorDesigner({ pricingItems }: ExteriorDesignerProps) {
           </h2>
           <p className="mt-4 max-w-3xl text-base leading-relaxed text-zinc-600 sm:text-lg">
             Configure <strong>siding</strong>, <strong>windows</strong>, and <strong>doors</strong> with
-            spec-level options informed by coastal build practice. Your selections compile into a
-            single quote request—edit before you send.
+            spec-level options informed by coastal build practice. Add optional scope lines to describe
+            quantities—rates stay internal and appear only in your formal estimate. Everything compiles
+            into one quote request you can edit before sending.
           </p>
         </Reveal>
 
@@ -906,11 +871,12 @@ export function ExteriorDesigner({ pricingItems }: ExteriorDesignerProps) {
 
             <div className="rounded-lg border border-base-black/10 bg-base-white p-4 sm:p-5">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-base-black/70">
-                Estimate builder
+                Scope line builder
               </h3>
               <p className="mt-2 text-xs text-base-black/55">
-                Add labour line items from the current tab, enter dimensions, then apply quantities.
-                <strong className="text-base-black"> SQ = 100 sq ft</strong>.
+                Add line items from the current tab to describe scope and quantities. Pricing is not
+                shown on the website—our team applies internal rates when preparing your quote.{" "}
+                <strong className="text-base-black">SQ = 100 sq ft</strong>.
               </p>
 
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
@@ -988,11 +954,11 @@ export function ExteriorDesigner({ pricingItems }: ExteriorDesignerProps) {
                   {tabRateOptions.length ? (
                     tabRateOptions.map((item) => (
                       <option key={item.item} value={item.item}>
-                        {item.item} ({item.coverage.toUpperCase()}) - {item.cost}
+                        {item.item} ({item.coverage.toUpperCase()})
                       </option>
                     ))
                   ) : (
-                    <option value="">No matching pricing lines for this tab</option>
+                    <option value="">No matching line items for this tab</option>
                   )}
                 </select>
                 <button
@@ -1015,70 +981,51 @@ export function ExteriorDesigner({ pricingItems }: ExteriorDesignerProps) {
 
               {estimateLines.length ? (
                 <div className="mt-4 space-y-2">
-                  {estimateLines.map((line) => {
-                    const lineSubtotal = line.unitRate * line.quantity;
-                    const lineWaste = lineSubtotal * parseWasteRate(line.wasteFactor);
-                    return (
-                      <div
-                        key={line.item}
-                        className="grid gap-2 rounded-md border border-base-black/10 bg-zinc-50 p-3 sm:grid-cols-[1fr_auto_auto_auto]"
-                      >
-                        <div>
-                          <p className="text-sm font-semibold text-base-black">{line.item}</p>
-                          <p className="text-[11px] text-base-black/55">
-                            {line.coverage.toUpperCase()} · Rate {line.cost} · Waste {line.wasteFactor || "0%"}
-                          </p>
-                        </div>
-                        <label className="text-xs text-base-black/60">
-                          Qty
-                          <input
-                            type="number"
-                            min="0.01"
-                            step="0.01"
-                            value={line.quantity}
-                            onChange={(e) => {
-                              const next = Math.max(0.01, safeNumber(e.target.value, 0.01));
-                              setEstimateLines((prev) =>
-                                prev.map((p) => (p.item === line.item ? { ...p, quantity: next } : p)),
-                              );
-                            }}
-                            className="mt-1 w-24 rounded-md border border-base-black/15 bg-base-white px-2 py-1.5 text-sm"
-                          />
-                        </label>
-                        <div className="self-end pb-1 text-sm font-semibold text-primary-aqua">
-                          {formatMoney(lineSubtotal + lineWaste)}
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setEstimateLines((prev) => prev.filter((p) => p.item !== line.item))
-                          }
-                          className="self-end pb-1 text-xs font-semibold uppercase tracking-wide text-base-black/55 transition hover:text-red-700"
-                        >
-                          Remove
-                        </button>
+                  {estimateLines.map((line) => (
+                    <div
+                      key={line.item}
+                      className="grid gap-2 rounded-md border border-base-black/10 bg-zinc-50 p-3 sm:grid-cols-[1fr_auto_auto]"
+                    >
+                      <div>
+                        <p className="text-sm font-semibold text-base-black">{line.item}</p>
+                        <p className="text-[11px] text-base-black/55">
+                          Unit: {line.coverage.toUpperCase()} · Waste allowance {line.wasteFactor || "0%"}
+                        </p>
                       </div>
-                    );
-                  })}
+                      <label className="text-xs text-base-black/60">
+                        Qty
+                        <input
+                          type="number"
+                          min="0.01"
+                          step="0.01"
+                          value={line.quantity}
+                          onChange={(e) => {
+                            const next = Math.max(0.01, safeNumber(e.target.value, 0.01));
+                            setEstimateLines((prev) =>
+                              prev.map((p) => (p.item === line.item ? { ...p, quantity: next } : p)),
+                            );
+                          }}
+                          className="mt-1 w-24 rounded-md border border-base-black/15 bg-base-white px-2 py-1.5 text-sm"
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setEstimateLines((prev) => prev.filter((p) => p.item !== line.item))}
+                        className="self-end pb-1 text-xs font-semibold uppercase tracking-wide text-base-black/55 transition hover:text-red-700"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
 
-                  <div className="rounded-md border border-base-black/10 bg-base-white p-3 text-sm">
-                    <div className="flex items-center justify-between">
-                      <span className="text-base-black/70">Subtotal</span>
-                      <span className="font-semibold text-base-black">{formatMoney(estimateSubtotal)}</span>
-                    </div>
-                    <div className="mt-1 flex items-center justify-between">
-                      <span className="text-base-black/70">Waste allowance</span>
-                      <span className="font-semibold text-base-black">{formatMoney(estimateWaste)}</span>
-                    </div>
-                    <div className="mt-2 flex items-center justify-between border-t border-base-black/10 pt-2">
-                      <span className="font-semibold text-base-black">Estimated labour total</span>
-                      <span className="text-base font-bold text-primary-aqua">{formatMoney(estimateTotal)}</span>
-                    </div>
-                  </div>
+                  <p className="rounded-md border border-dashed border-base-black/15 bg-base-white p-3 text-xs leading-relaxed text-base-black/60">
+                    Dollar amounts are not shown here. When you send a quote request, we match these
+                    lines to internal labour and material pricing and reply with a written estimate.
+                  </p>
                 </div>
               ) : (
                 <p className="mt-4 text-xs text-base-black/55">
-                  No estimate lines added yet. Choose a rate line and click <strong>Add line item</strong>.
+                  No scope lines added yet. Choose a line item and click <strong>Add line item</strong>.
                 </p>
               )}
             </div>

@@ -11,9 +11,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Seaside Contracting | Precision in Every Build",
+  title: "Seaside Contracting | Halifax & coastal Nova Scotia",
   description:
-    "Delivering modern design and uncompromising coastal craftsmanship to Halifax and surrounding areas.",
+    "Residential and commercial contracting—exteriors, renovations, and envelope work rooted in Halifax and the Nova Scotia shore.",
 };
 
 export default function RootLayout({

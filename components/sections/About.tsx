@@ -1,8 +1,28 @@
 import Image from "next/image";
 import { Reveal } from "@/components/motion/Reveal";
 import { withBasePath } from "@/lib/withBasePath";
+import type { ProjectAudience } from "@/lib/audience";
 
-export function About() {
+export type AboutProps = { audience: ProjectAudience };
+
+export function About({ audience }: AboutProps) {
+  const copy =
+    audience === "commercial"
+      ? {
+          title: "Built for the coast. Trusted on complex sites.",
+          paragraphs: [
+            "Seaside Contracting supports owners and operators who need exterior work done right the first time—from cladding and openings to coordinated trim packages across multi-unit or retail footprints.",
+            "We combine code-aware detailing with field pragmatism: protecting weathertight layers, respecting occupied buildings, and communicating clearly with everyone who depends on the schedule.",
+          ],
+        }
+      : {
+          title: "Built for the coast. Built to last.",
+          paragraphs: [
+            "At Seaside Contracting, we believe your home should be as resilient as it is beautiful. Specializing in high-end residential builds and modern renovations across Nova Scotia, our team brings meticulous attention to detail and unwavering reliability to every project.",
+            "We don't just build homes—we engineer living spaces designed to thrive in the coastal environment, with assemblies and finishes selected for performance in salt air, wind, and seasonal swings.",
+          ],
+        };
+
   return (
     <section
       id="about"
@@ -35,20 +55,12 @@ export function About() {
                 id="about-heading"
                 className="mt-4 text-3xl font-bold tracking-tight text-base-black sm:text-4xl lg:text-[2.35rem] lg:leading-snug"
               >
-                Built for the coast. Built to last.
+                {copy.title}
               </h2>
               <div className="mt-6 space-y-4 text-base leading-relaxed text-zinc-600 sm:text-lg">
-                <p>
-                  At Seaside Contracting, we believe your home should be as resilient as it is
-                  beautiful. Specializing in high-end residential builds and modern renovations across
-                  Nova Scotia, our team brings meticulous attention to detail and unwavering
-                  reliability to every project.
-                </p>
-                <p>
-                  We don&apos;t just build homes—we engineer living spaces designed to thrive in the
-                  coastal environment, with assemblies and finishes selected for performance in salt
-                  air, wind, and seasonal swings.
-                </p>
+                {copy.paragraphs.map((p, i) => (
+                  <p key={i}>{p}</p>
+                ))}
               </div>
             </Reveal>
           </div>

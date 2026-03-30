@@ -13,20 +13,11 @@ import {
   X,
   Youtube,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { filterShowcaseByAudience, type ProjectAudience } from "@/lib/audience";
 import { JOB_SHOWCASE_IMAGES, type JobShowcaseImage } from "@/lib/jobShowcaseImages";
 import { withBasePath } from "@/lib/withBasePath";
 import "./showcase.css";
-
-const HERO_1483 =
-  JOB_SHOWCASE_IMAGES.find((image) => image.src.src.toLowerCase().includes("img_1483")) ??
-  JOB_SHOWCASE_IMAGES[0];
-const HERO_SECONDARY = JOB_SHOWCASE_IMAGES[18] ?? JOB_SHOWCASE_IMAGES[0];
-const HERO_TERTIARY = JOB_SHOWCASE_IMAGES[32] ?? JOB_SHOWCASE_IMAGES[0];
-const TEAM_IMAGE = JOB_SHOWCASE_IMAGES[15] ?? JOB_SHOWCASE_IMAGES[0];
-const SERVICE_AREA_IMAGE =
-  JOB_SHOWCASE_IMAGES.find((image) => image.src.src.toLowerCase().includes("img_2576")) ??
-  JOB_SHOWCASE_IMAGES[0];
 
 type ShowcaseGalleryItem = {
   image: JobShowcaseImage;
@@ -34,41 +25,77 @@ type ShowcaseGalleryItem = {
   detail: string;
 };
 
-const GALLERY_ITEMS: ShowcaseGalleryItem[] = JOB_SHOWCASE_IMAGES.map((image) => ({
-  image,
-  title: image.title,
-  detail: image.alt,
-}));
-
-/** Showcase hero slides sourced from completed Seaside projects. */
-const SLIDES = [
-  {
-    image: HERO_1483.src,
-    eyebrow: "Featured project · IMG_1483",
-    title: "Coastal siding craftsmanship with clean, durable lines",
-    href: "/#contact",
-  },
-  {
-    image: HERO_SECONDARY.src,
-    eyebrow: "Openings, trim, and detail work",
-    title: "Precision capping and finish carpentry around windows and doors",
-    href: "/#exterior-design",
-  },
-  {
-    image: HERO_TERTIARY.src,
-    eyebrow: "Full envelope upgrades",
-    title: "Complete exterior packages built for Halifax weather cycles",
-    href: "/#about",
-  },
-] as const;
-
 const TAB_LABELS = [
   { n: "01", label: "Featured siding" },
   { n: "02", label: "Trim details" },
   { n: "03", label: "Full exterior scope" },
 ] as const;
 
-export function ShowcaseClient() {
+type SlideDef = {
+  image: (typeof JOB_SHOWCASE_IMAGES)[number]["src"];
+  eyebrow: string;
+  title: string;
+  href: string;
+};
+
+export type ShowcaseClientProps = { audience: ProjectAudience };
+
+export function ShowcaseClient({ audience }: ShowcaseClientProps) {
+  const siteRoot = audience === "commercial" ? "/commercial" : "/residential";
+
+  const imagePool = useMemo(() => {
+    const filtered = filterShowcaseByAudience(JOB_SHOWCASE_IMAGES, audience);
+    return filtered.length ? filtered : JOB_SHOWCASE_IMAGES;
+  }, [audience]);
+
+  const { GALLERY_ITEMS, SLIDES, TEAM_IMAGE, SERVICE_AREA_IMAGE } = useMemo(() => {
+    const last = Math.max(0, imagePool.length - 1);
+    const heroPrimary =
+      imagePool.find((image) => image.src.src.toLowerCase().includes("img_1483")) ?? imagePool[0];
+    const heroSecondary = imagePool[Math.min(18, last)] ?? imagePool[0];
+    const heroTertiary = imagePool[Math.min(32, last)] ?? imagePool[0];
+    const team = imagePool[Math.min(15, last)] ?? imagePool[0];
+    const serviceArea =
+      imagePool.find((image) => image.src.src.toLowerCase().includes("img_2576")) ?? imagePool[0];
+
+    const galleryItems: ShowcaseGalleryItem[] = imagePool.map((image) => ({
+      image,
+      title: image.title,
+      detail: image.alt,
+    }));
+
+    const slides: SlideDef[] = [
+      {
+        image: heroPrimary.src,
+        eyebrow: audience === "commercial" ? "Envelope & cladding" : "Featured coastal exterior",
+        title:
+          audience === "commercial"
+            ? "Durable assemblies for buildings that stay in service"
+            : "Coastal siding craftsmanship with clean, durable lines",
+        href: `${siteRoot}#contact`,
+      },
+      {
+        image: heroSecondary.src,
+        eyebrow: "Openings, trim, and detail work",
+        title: "Precision capping and finish carpentry around windows and doors",
+        href: `${siteRoot}#exterior-design`,
+      },
+      {
+        image: heroTertiary.src,
+        eyebrow: "Full exterior scope",
+        title: "Complete exterior packages built for Halifax weather cycles",
+        href: `${siteRoot}#about`,
+      },
+    ];
+
+    return {
+      GALLERY_ITEMS: galleryItems,
+      SLIDES: slides,
+      TEAM_IMAGE: team,
+      SERVICE_AREA_IMAGE: serviceArea,
+    };
+  }, [audience, imagePool, siteRoot]);
+
   const [currentSlide, setCurrentSlide] = useState(0);
   const [navSolid, setNavSolid] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -79,7 +106,7 @@ export function ShowcaseClient() {
       setCurrentSlide((i) => (i + 1) % SLIDES.length);
     }, 8000);
     return () => clearInterval(t);
-  }, []);
+  }, [SLIDES.length]);
 
   useEffect(() => {
     const onScroll = () => setNavSolid(window.scrollY > 80);
@@ -136,7 +163,7 @@ export function ShowcaseClient() {
       document.body.style.overflow = "";
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [lightboxIndex]);
+  }, [lightboxIndex, GALLERY_ITEMS.length]);
 
   return (
     <div ref={rootRef} className="showcase-root scroll-smooth bg-white text-slate-900">
@@ -145,7 +172,7 @@ export function ShowcaseClient() {
           navSolid ? "bg-[var(--sea-dark)] py-4 shadow-2xl" : "bg-transparent"
         }`}
       >
-        <Link href="/" className="flex min-w-0 items-center gap-3">
+        <Link href={siteRoot} className="flex min-w-0 items-center gap-3">
           <Image
             src={withBasePath("/brand/newlogolight.png")}
             alt="Seaside Contracting"
@@ -166,7 +193,7 @@ export function ShowcaseClient() {
             Search
           </button>
           <Link
-            href="/#contact"
+            href={`${siteRoot}#contact`}
             className="rounded-full p-2 text-white transition hover:bg-white/10"
             aria-label="Menu — jump to contact"
           >
@@ -282,7 +309,7 @@ export function ShowcaseClient() {
             </p>
           </div>
           <Link
-            href="/#about"
+            href={`${siteRoot}#about`}
             className="group relative inline-block overflow-hidden border-2 border-slate-900 px-12 py-5 text-sm font-bold uppercase tracking-widest transition-colors duration-500 hover:text-white"
           >
             <span className="relative z-10">About Seaside</span>
@@ -386,7 +413,7 @@ export function ShowcaseClient() {
               </p>
             </div>
             <Link
-              href="/#contact"
+              href={`${siteRoot}#contact`}
               className="block w-full bg-teal-900 py-6 text-center text-sm font-bold uppercase tracking-widest text-white shadow-xl transition-all hover:bg-teal-800"
             >
               Start your project
@@ -415,14 +442,14 @@ export function ShowcaseClient() {
               </div>
               <div className="flex gap-4">
                 <Link
-                  href="/#contact"
+                  href={`${siteRoot}#contact`}
                   className="flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 transition-all hover:bg-slate-900 hover:text-white"
                   aria-label="Contact"
                 >
                   <ArrowLeft className="h-4 w-4" />
                 </Link>
                 <Link
-                  href="/#services"
+                  href={`${siteRoot}#services`}
                   className="flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 transition-all hover:bg-slate-900 hover:text-white"
                   aria-label="Services"
                 >
@@ -460,16 +487,16 @@ export function ShowcaseClient() {
           </div>
           <div className="flex flex-wrap gap-6">
             <Link
-              href="/pricing"
+              href={`${siteRoot}#contact`}
               className="border-b-2 border-slate-300 pb-1 text-xs font-bold uppercase tracking-widest transition hover:border-teal-900"
             >
-              See pricing
+              Request a quote
             </Link>
             <Link
-              href="/"
+              href={siteRoot}
               className="border-b-2 border-slate-300 pb-1 text-xs font-bold uppercase tracking-widest transition hover:border-teal-900"
             >
-              Back to home
+              Back to site
             </Link>
           </div>
         </div>
@@ -596,7 +623,7 @@ export function ShowcaseClient() {
         <div className="absolute bottom-0 right-0 h-96 w-96 translate-x-20 translate-y-20 bg-[var(--sea-accent)] opacity-10 showcase-clip-wing-bl" />
         <div className="relative z-10 mb-32 grid grid-cols-1 gap-20 md:grid-cols-4">
           <div className="space-y-8 md:col-span-2">
-            <Link href="/" className="inline-flex items-center gap-3">
+            <Link href={siteRoot} className="inline-flex items-center gap-3">
               <Image
                 src={withBasePath("/brand/newlogolight.png")}
                 alt="Seaside Contracting"
@@ -617,22 +644,22 @@ export function ShowcaseClient() {
             </h5>
             <ul className="space-y-4 text-slate-300">
               <li>
-                <Link href="/#services" className="transition hover:text-white">
+                <Link href={`${siteRoot}#services`} className="transition hover:text-white">
                   Services
                 </Link>
               </li>
               <li>
-                <Link href="/pricing" className="transition hover:text-white">
-                  Pricing
+                <Link href={`${siteRoot}#estimate-cta`} className="transition hover:text-white">
+                  Estimates
                 </Link>
               </li>
               <li>
-                <Link href="/#exterior-design" className="transition hover:text-white">
+                <Link href={`${siteRoot}#exterior-design`} className="transition hover:text-white">
                   Exterior designer
                 </Link>
               </li>
               <li>
-                <Link href="/#contact" className="transition hover:text-white">
+                <Link href={`${siteRoot}#contact`} className="transition hover:text-white">
                   Contact
                 </Link>
               </li>
@@ -691,7 +718,7 @@ export function ShowcaseClient() {
           <p>© {new Date().getFullYear()} Seaside Contracting. All rights reserved.</p>
           <div className="flex gap-8">
             <Link href="/" className="transition hover:text-white">
-              Main site
+              Choose audience
             </Link>
           </div>
         </div>

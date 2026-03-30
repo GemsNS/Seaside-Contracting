@@ -1,11 +1,29 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Reveal } from "@/components/motion/Reveal";
+import { filterShowcaseByAudience, type ProjectAudience } from "@/lib/audience";
 import { JOB_SHOWCASE_IMAGES } from "@/lib/jobShowcaseImages";
 
-const FEATURED_IMAGES = JOB_SHOWCASE_IMAGES.slice(0, 8);
+export type JobShowcaseGalleryProps = { audience: ProjectAudience };
 
-export function JobShowcaseGallery() {
+export function JobShowcaseGallery({ audience }: JobShowcaseGalleryProps) {
+  const pool = filterShowcaseByAudience(JOB_SHOWCASE_IMAGES, audience);
+  const featured = (pool.length ? pool : JOB_SHOWCASE_IMAGES).slice(0, 8);
+  const showcaseHref = `/showcase?audience=${audience}`;
+
+  const heading =
+    audience === "commercial"
+      ? {
+          eyebrow: "Commercial portfolio",
+          title: "Exterior work for buildings in the real world",
+          body: "A curated slice of completed scopes—cladding, openings, and envelope details—shown with the same rigor we bring to occupied and phased sites.",
+        }
+      : {
+          eyebrow: "Completed work",
+          title: "Real projects, built for coastal conditions",
+          body: "Explore recent Seaside Contracting projects across Halifax and Nova Scotia. Every image reflects the same priorities: clean detailing, weather-ready assemblies, and reliable communication.",
+        };
+
   return (
     <section
       id="gallery"
@@ -17,22 +35,18 @@ export function JobShowcaseGallery() {
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div className="max-w-3xl">
               <p className="text-xs font-semibold uppercase tracking-[0.28em] text-primary-aqua">
-                Completed work
+                {heading.eyebrow}
               </p>
               <h2
                 id="gallery-heading"
                 className="mt-4 text-3xl font-bold tracking-tight text-base-black sm:text-4xl lg:text-[2.35rem] lg:leading-snug"
               >
-                Real projects, built for coastal conditions
+                {heading.title}
               </h2>
-              <p className="mt-5 text-base leading-relaxed text-zinc-600 sm:text-lg">
-                Explore recent Seaside Contracting projects across Halifax and Nova Scotia. Every image
-                reflects the same priorities: clean detailing, weather-ready assemblies, and reliable
-                communication.
-              </p>
+              <p className="mt-5 text-base leading-relaxed text-zinc-600 sm:text-lg">{heading.body}</p>
             </div>
             <Link
-              href="/showcase"
+              href={showcaseHref}
               className="inline-flex w-fit rounded-sm bg-zinc-950 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-800"
             >
               View full showcase
@@ -41,7 +55,7 @@ export function JobShowcaseGallery() {
         </Reveal>
 
         <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          {FEATURED_IMAGES.map((image, idx) => (
+          {featured.map((image, idx) => (
             <Reveal key={`${image.alt}-${idx}`} delay={idx * 0.04} y={20}>
               <figure className="group relative overflow-hidden rounded-sm border border-zinc-200/80 bg-zinc-100">
                 <div className="relative aspect-[4/3]">

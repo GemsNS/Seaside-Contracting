@@ -1,19 +1,20 @@
+"use client";
+
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { withBasePath } from "@/lib/withBasePath";
 import Link from "next/link";
 import { NovaScotiaFlag } from "@/components/NovaScotiaFlag";
-
-const quick = [
-  { href: "/", label: "Home" },
-  { href: "/showcase", label: "Showcase" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/#gallery", label: "Gallery" },
-  { href: "/#services", label: "Services" },
-  { href: "/#about", label: "About" },
-  { href: "/#contact", label: "Contact" },
-];
+import { footerQuickLinksForPathname } from "@/lib/siteNav";
 
 export function Footer() {
+  const pathname = usePathname();
+  const quick = footerQuickLinksForPathname(pathname);
+  const tagline =
+    pathname.startsWith("/commercial") && pathname !== "/"
+      ? "Commercial exterior and envelope work for Halifax and coastal Nova Scotia—field discipline, clear scopes, and finishes built for the Atlantic climate."
+      : "Full-service residential construction for Halifax and coastal Nova Scotia—delivered with the accountability and craft you expect from a trusted partner.";
+
   return (
     <footer className="border-t-4 border-primary-aqua bg-zinc-950 text-zinc-200">
       <div className="mx-auto max-w-7xl px-4 pb-12 pt-12 sm:px-6 sm:pb-16 sm:pt-14 lg:px-8">
@@ -29,10 +30,7 @@ export function Footer() {
                 className="h-auto w-auto max-w-[260px] object-contain object-left sm:max-w-[280px]"
               />
             </Link>
-            <p className="mt-6 max-w-md text-sm leading-relaxed text-zinc-400">
-              Full-service residential construction for Halifax and coastal Nova Scotia—delivered with
-              the accountability and craft you expect from a trusted partner.
-            </p>
+            <p className="mt-6 max-w-md text-sm leading-relaxed text-zinc-400">{tagline}</p>
           </div>
 
           <nav className="lg:col-span-3" aria-label="Footer">

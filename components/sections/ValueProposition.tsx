@@ -1,6 +1,7 @@
 import { Reveal } from "@/components/motion/Reveal";
+import type { ProjectAudience } from "@/lib/audience";
 
-const pillars = [
+const residentialPillars = [
   {
     title: "Mobilize the right team",
     body:
@@ -18,7 +19,41 @@ const pillars = [
   },
 ] as const;
 
-export function ValueProposition() {
+const commercialPillars = [
+  {
+    title: "Phased, accountable delivery",
+    body:
+      "We plan exterior work around occupancy, access, and safety—so upgrades to cladding, openings, and trim advance without surprises for your team or tenants.",
+  },
+  {
+    title: "Envelope-first thinking",
+    body:
+      "Coastal wind, moisture, and seasonal movement drive our details. We specify assemblies that protect the asset and simplify long-term maintenance.",
+  },
+  {
+    title: "Single partner for the shell",
+    body:
+      "From storefront refreshes to multi-elevation packages, Seaside coordinates siding, windows, doors, and finish carpentry under one clear field standard.",
+  },
+] as const;
+
+export type ValuePropositionProps = { audience: ProjectAudience };
+
+export function ValueProposition({ audience }: ValuePropositionProps) {
+  const pillars = audience === "commercial" ? commercialPillars : residentialPillars;
+  const sectionLead =
+    audience === "commercial"
+      ? {
+          kicker: "Why Seaside",
+          title: "Commercial exterior work with residential-grade finish discipline.",
+          body: "Property teams choose us when the building cannot afford loose ends: documented scopes, respectful site presence, and craftsmanship visible at the details.",
+        }
+      : {
+          kicker: "Why Seaside",
+          title: "The flexibility to deliver unique solutions—and the focus to deliver value to your bottom line.",
+          body: "Partnering with Seaside means a reliable, full-service residential partner rooted in Halifax and coastal Nova Scotia: proven craft, transparent communication, and builds designed to thrive where salt air and storms set the bar.",
+        };
+
   return (
     <section
       className="border-y border-zinc-200/80 bg-zinc-50 py-16 sm:py-20"
@@ -28,20 +63,15 @@ export function ValueProposition() {
         <Reveal>
           <div className="max-w-4xl">
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-primary-aqua">
-              Why Seaside
+              {sectionLead.kicker}
             </p>
             <h2
               id="value-heading"
               className="mt-4 text-3xl font-bold tracking-tight text-base-black sm:text-4xl lg:text-[2.35rem] lg:leading-snug"
             >
-              The flexibility to deliver unique solutions—and the focus to deliver value to your
-              bottom line.
+              {sectionLead.title}
             </h2>
-            <p className="mt-6 text-base leading-relaxed text-zinc-600 sm:text-lg">
-              Partnering with Seaside means a reliable, full-service residential partner rooted in
-              Halifax and coastal Nova Scotia: proven craft, transparent communication, and builds
-              designed to thrive where salt air and storms set the bar.
-            </p>
+            <p className="mt-6 text-base leading-relaxed text-zinc-600 sm:text-lg">{sectionLead.body}</p>
           </div>
         </Reveal>
 
