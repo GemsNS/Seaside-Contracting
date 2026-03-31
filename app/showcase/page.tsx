@@ -1,12 +1,18 @@
-import { audienceFromSearchParam } from "@/lib/audience";
+import { Suspense } from "react";
 import { ShowcaseClient } from "./ShowcaseClient";
 
-type PageProps = {
-  searchParams: Promise<{ audience?: string | string[] }>;
-};
+function ShowcaseFallback() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[var(--sea-dark,#0f172a)] text-white">
+      <p className="text-sm text-zinc-400">Loading showcase…</p>
+    </div>
+  );
+}
 
-export default async function ShowcasePage({ searchParams }: PageProps) {
-  const sp = await searchParams;
-  const audience = audienceFromSearchParam(sp.audience);
-  return <ShowcaseClient audience={audience} />;
+export default function ShowcasePage() {
+  return (
+    <Suspense fallback={<ShowcaseFallback />}>
+      <ShowcaseClient />
+    </Suspense>
+  );
 }

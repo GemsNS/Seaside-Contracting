@@ -13,8 +13,9 @@ import {
   X,
   Youtube,
 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { filterShowcaseByAudience, type ProjectAudience } from "@/lib/audience";
+import { audienceFromSearchParam, filterShowcaseByAudience, type ProjectAudience } from "@/lib/audience";
 import { JOB_SHOWCASE_IMAGES, type JobShowcaseImage } from "@/lib/jobShowcaseImages";
 import { withBasePath } from "@/lib/withBasePath";
 import "./showcase.css";
@@ -38,9 +39,15 @@ type SlideDef = {
   href: string;
 };
 
-export type ShowcaseClientProps = { audience: ProjectAudience };
-
-export function ShowcaseClient({ audience }: ShowcaseClientProps) {
+/**
+ * Reads `?audience=commercial|residential` on the client so `/showcase` can stay statically
+ * prerenderable (static export / `dynamic = "error"` builds cannot use server `searchParams`).
+ */
+export function ShowcaseClient() {
+  const searchParams = useSearchParams();
+  const audience: ProjectAudience = audienceFromSearchParam(
+    searchParams.get("audience") ?? undefined,
+  );
   const siteRoot = audience === "commercial" ? "/commercial" : "/residential";
 
   const imagePool = useMemo(() => {
