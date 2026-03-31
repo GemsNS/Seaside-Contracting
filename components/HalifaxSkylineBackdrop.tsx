@@ -21,7 +21,6 @@ export function HalifaxSkylineBackdrop({
   reduce,
   tempC,
 }: Props) {
-  const cloudGradId = useId().replace(/:/g, "");
   const rainPatId = useId().replace(/:/g, "");
   const skylineEdgeId = useId().replace(/:/g, "");
   const skylineMaskId = useId().replace(/:/g, "");
@@ -91,28 +90,25 @@ export function HalifaxSkylineBackdrop({
         />
       ) : null}
 
-      {/* Cloud layers */}
-      <svg
-        className="pointer-events-none absolute -left-[5%] top-[6%] h-[38%] w-[110%] md:top-[8%]"
-        viewBox="0 0 1200 220"
-        preserveAspectRatio="none"
-        style={{ opacity: palette.cloudOpacity }}
-      >
-        <defs>
-          <linearGradient id={cloudGradId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="rgba(255,255,255,0.5)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0.08)" />
-          </linearGradient>
-        </defs>
-        <g className={motion ? "hero-cloud-a" : undefined}>
-          <ellipse cx="200" cy="80" rx="160" ry="42" fill={`url(#${cloudGradId})`} />
-          <ellipse cx="320" cy="88" rx="120" ry="36" fill={`url(#${cloudGradId})`} />
-        </g>
-        <g className={motion ? "hero-cloud-b" : undefined}>
-          <ellipse cx="780" cy="70" rx="200" ry="48" fill={`url(#${cloudGradId})`} />
-          <ellipse cx="960" cy="78" rx="140" ry="40" fill={`url(#${cloudGradId})`} />
-        </g>
-      </svg>
+      {/* Atmospheric cloud cover — broad photographic layers (no cartoon ellipses). */}
+      <div
+        className="pointer-events-none absolute inset-x-[-6%] top-[-2%] h-[42%]"
+        style={{
+          opacity: Math.min(0.9, 0.35 + palette.cloudOpacity * 0.9),
+          background:
+            "radial-gradient(ellipse 48% 32% at 18% 20%, rgba(255,255,255,0.22), transparent 70%), radial-gradient(ellipse 58% 36% at 68% 18%, rgba(255,255,255,0.2), transparent 72%), radial-gradient(ellipse 52% 30% at 42% 8%, rgba(205,220,235,0.18), transparent 70%)",
+          filter: "blur(14px)",
+        }}
+      />
+      <div
+        className={`pointer-events-none absolute inset-x-0 top-[8%] h-[26%] ${motion ? "hero-cloud-a" : ""}`}
+        style={{
+          opacity: Math.min(0.58, palette.cloudOpacity * 0.8),
+          background:
+            "linear-gradient(to bottom, rgba(255,255,255,0.14), rgba(255,255,255,0.06) 45%, transparent 100%)",
+          filter: "blur(8px)",
+        }}
+      />
 
       {/* Fog near water */}
       {fog ? (
@@ -238,7 +234,7 @@ export function HalifaxSkylineBackdrop({
       {/* Skyline + lit windows — base sits on harbour line */}
       <div
         className="pointer-events-none absolute left-0 z-[1] w-full"
-        style={{ bottom: waterBand, height: "min(36vh, 280px)" }}
+        style={{ bottom: waterBand, height: "min(30vh, 230px)" }}
       >
         <svg
           className="h-full w-full"
@@ -250,10 +246,10 @@ export function HalifaxSkylineBackdrop({
               <stop offset="0%" stopColor="rgba(255,255,255,0.06)" />
               <stop offset="100%" stopColor="rgba(0,0,0,0.35)" />
             </linearGradient>
-            {/* Reveal harbour (bridge + stacks) on the left; downtown stays opaque */}
+            {/* Reveal harbour scene on left where bridge/stacks live */}
             <mask id={skylineMaskId} maskUnits="userSpaceOnUse">
               <rect width="1200" height="200" fill="white" />
-              <rect x="0" y="0" width="120" height="200" fill="black" />
+              <rect x="0" y="0" width="380" height="200" fill="black" />
             </mask>
           </defs>
           <g mask={`url(#${skylineMaskId})`}>

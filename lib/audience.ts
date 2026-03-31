@@ -8,7 +8,7 @@ export function isProjectAudience(value: string | undefined | null): value is Pr
 }
 
 export function showcaseMatchesAudience(tag: JobShowcaseAudience, audience: ProjectAudience): boolean {
-  return tag === "both" || tag === audience;
+  return tag === audience;
 }
 
 export function filterShowcaseByAudience(

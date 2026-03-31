@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { AudienceSiteHome } from "@/components/pages/AudienceSiteHome";
+import { CommercialSiteHome } from "@/components/pages/CommercialSiteHome";
+import { getPricingItems } from "@/lib/pricingData";
 
 export const metadata: Metadata = {
   title: "Commercial | Seaside Contracting",
@@ -7,6 +8,7 @@ export const metadata: Metadata = {
     "Commercial building envelopes, exterior upgrades, and phased cladding and opening work for Nova Scotia properties.",
 };
 
-export default function CommercialPage() {
-  return <AudienceSiteHome audience="commercial" />;
+export default async function CommercialPage() {
+  const pricingItems = await getPricingItems();
+  return <CommercialSiteHome pricingItems={pricingItems} />;
 }

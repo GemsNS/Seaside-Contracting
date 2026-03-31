@@ -52,10 +52,19 @@ export function ShowcaseClient() {
 
   const imagePool = useMemo(() => {
     const filtered = filterShowcaseByAudience(JOB_SHOWCASE_IMAGES, audience);
-    return filtered.length ? filtered : JOB_SHOWCASE_IMAGES;
+    return filtered;
   }, [audience]);
 
   const { GALLERY_ITEMS, SLIDES, TEAM_IMAGE, SERVICE_AREA_IMAGE } = useMemo(() => {
+    if (!imagePool.length) {
+      return {
+        GALLERY_ITEMS: [] as ShowcaseGalleryItem[],
+        SLIDES: [] as SlideDef[],
+        TEAM_IMAGE: JOB_SHOWCASE_IMAGES[0],
+        SERVICE_AREA_IMAGE: JOB_SHOWCASE_IMAGES[0],
+      };
+    }
+
     const last = Math.max(0, imagePool.length - 1);
     const heroPrimary =
       imagePool.find((image) => image.src.src.toLowerCase().includes("img_1483")) ?? imagePool[0];
@@ -109,6 +118,7 @@ export function ShowcaseClient() {
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!SLIDES.length) return;
     const t = setInterval(() => {
       setCurrentSlide((i) => (i + 1) % SLIDES.length);
     }, 8000);
@@ -211,6 +221,21 @@ export function ShowcaseClient() {
 
       {/* Hero slider */}
       <section className="relative h-screen w-full overflow-hidden" id="hero-slider">
+        {!SLIDES.length ? (
+          <div className="relative z-20 flex h-full items-center justify-center px-6 text-center">
+            <div className="max-w-2xl rounded-sm border border-white/20 bg-black/35 p-8 backdrop-blur">
+              <p className="text-xs font-bold uppercase tracking-[0.28em] text-[var(--sea-accent)]">
+                Showcase unavailable
+              </p>
+              <h1 className="mt-4 text-3xl font-bold text-white md:text-4xl">
+                No photos are tagged for this audience yet.
+              </h1>
+              <p className="mt-4 text-sm text-white/75">
+                Add audience-specific project photos to populate this showcase view.
+              </p>
+            </div>
+          </div>
+        ) : null}
         {SLIDES.map((slide, i) => (
           <div
             key={slide.title}
@@ -262,37 +287,39 @@ export function ShowcaseClient() {
           </div>
         ))}
 
-        <div className="absolute bottom-0 left-0 z-30 grid w-full grid-cols-1 md:grid-cols-3">
-          {TAB_LABELS.map((tab, i) => (
-            <button
-              key={tab.n}
-              type="button"
-              onClick={() => setCurrentSlide(i)}
-              className={`group p-8 text-left backdrop-blur-md transition-all duration-500 ${
-                i === currentSlide
-                  ? "border-t-4 border-[var(--sea-accent)] bg-[var(--sea-accent)]/20"
-                  : "border-t-4 border-transparent bg-black/20 hover:bg-[var(--sea-accent)]"
-              } ${i === 0 ? "bg-black/40" : ""}`}
-            >
-              <p
-                className={`mb-1 text-[10px] font-bold uppercase tracking-widest ${
+        {SLIDES.length ? (
+          <div className="absolute bottom-0 left-0 z-30 grid w-full grid-cols-1 md:grid-cols-3">
+            {TAB_LABELS.map((tab, i) => (
+              <button
+                key={tab.n}
+                type="button"
+                onClick={() => setCurrentSlide(i)}
+                className={`group p-8 text-left backdrop-blur-md transition-all duration-500 ${
                   i === currentSlide
-                    ? "text-white/80"
-                    : "text-white/60 group-hover:text-black"
-                }`}
+                    ? "border-t-4 border-[var(--sea-accent)] bg-[var(--sea-accent)]/20"
+                    : "border-t-4 border-transparent bg-black/20 hover:bg-[var(--sea-accent)]"
+                } ${i === 0 ? "bg-black/40" : ""}`}
               >
-                {tab.n}
-              </p>
-              <p
-                className={`text-xs font-bold uppercase tracking-widest ${
-                  i === currentSlide ? "text-white" : "text-white group-hover:text-black"
-                }`}
-              >
-                {tab.label}
-              </p>
-            </button>
-          ))}
-        </div>
+                <p
+                  className={`mb-1 text-[10px] font-bold uppercase tracking-widest ${
+                    i === currentSlide
+                      ? "text-white/80"
+                      : "text-white/60 group-hover:text-black"
+                  }`}
+                >
+                  {tab.n}
+                </p>
+                <p
+                  className={`text-xs font-bold uppercase tracking-widest ${
+                    i === currentSlide ? "text-white" : "text-white group-hover:text-black"
+                  }`}
+                >
+                  {tab.label}
+                </p>
+              </button>
+            ))}
+          </div>
+        ) : null}
       </section>
 
       {/* Who we are */}

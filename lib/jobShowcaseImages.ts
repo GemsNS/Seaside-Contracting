@@ -39,8 +39,8 @@ import IMG_3207 from "@/assets/jobshowcase/IMG_3207.jpg";
 import IMG_3266 from "@/assets/jobshowcase/IMG_3266.jpg";
 import IMAGE_000000 from "@/assets/jobshowcase/image000000.JPG";
 
-/** Tag each asset for residential, commercial, or both galleries (revisit when new photos are added). */
-export type JobShowcaseAudience = "residential" | "commercial" | "both";
+/** Tag each asset for a single audience-specific gallery. */
+export type JobShowcaseAudience = "residential" | "commercial";
 
 export type JobShowcaseImage = {
   src: StaticImageData;
@@ -55,13 +55,13 @@ export const JOB_SHOWCASE_IMAGES: JobShowcaseImage[] = [
     src: F031DE44,
     alt: "Completed Seaside Contracting exterior project.",
     title: "Coastal exterior renovation",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMG_0983,
     alt: "Siding and trim installation completed by Seaside Contracting.",
     title: "Siding and trim package",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMG_0984,
@@ -85,25 +85,25 @@ export const JOB_SHOWCASE_IMAGES: JobShowcaseImage[] = [
     src: IMG_1773,
     alt: "Project showcase photo from a completed Seaside build.",
     title: "Completed build showcase",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMG_1774,
     alt: "Completed cladding and weatherproofing exterior work.",
     title: "Cladding and weatherproofing",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMG_1775,
     alt: "Finalized siding and trim package installation.",
     title: "Siding and trim installation",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMG_1776,
     alt: "Completed wall finish and exterior detail work.",
     title: "Wall finish and exterior details",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMG_1841,
@@ -115,13 +115,13 @@ export const JOB_SHOWCASE_IMAGES: JobShowcaseImage[] = [
     src: IMG_1849,
     alt: "Completed door and window exterior finishing package.",
     title: "Door and window finishing",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMG_1878,
     alt: "Craft-focused renovation with polished exterior details.",
     title: "Craft-focused exterior renovation",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMG_1886,
@@ -133,31 +133,31 @@ export const JOB_SHOWCASE_IMAGES: JobShowcaseImage[] = [
     src: IMG_1922,
     alt: "Final project photo featuring clean lines and durable finishes.",
     title: "Clean lines and durable finishes",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMG_1923,
     alt: "Exterior transformation project completed in Nova Scotia.",
     title: "Full exterior transformation",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMG_2177,
     alt: "Completed coastal renovation with durable materials.",
     title: "Coastal renovation",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMG_2198,
     alt: "Finished siding and trim project detail image.",
     title: "Siding and trim detail",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMG_2200,
     alt: "Completed construction project with premium exterior workmanship.",
     title: "Premium exterior workmanship",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMG_2203,
@@ -181,13 +181,13 @@ export const JOB_SHOWCASE_IMAGES: JobShowcaseImage[] = [
     src: IMG_2358,
     alt: "Completed project photo from Seaside Contracting portfolio.",
     title: "Portfolio exterior completion",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMG_2545,
     alt: "Crafted exterior finish and trim work from completed build.",
     title: "Exterior finish and trim",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMG_2567,
@@ -211,7 +211,7 @@ export const JOB_SHOWCASE_IMAGES: JobShowcaseImage[] = [
     src: IMG_2578,
     alt: "Detailed finish carpentry and exterior project completion.",
     title: "Finish carpentry completion",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMG_2597,
@@ -229,7 +229,7 @@ export const JOB_SHOWCASE_IMAGES: JobShowcaseImage[] = [
     src: IMG_2824,
     alt: "Finished renovation showcasing durable siding and trim.",
     title: "Siding detail with service integration",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMG_2835,
@@ -247,36 +247,36 @@ export const JOB_SHOWCASE_IMAGES: JobShowcaseImage[] = [
     src: IMG_2837,
     alt: "Exterior finishing and detailing from completed home project.",
     title: "Corner siding and trim detail",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMG_2839,
     alt: "Completed renovation image with high-quality finish standards.",
     title: "High-quality exterior finish",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMG_3205,
     alt: "Completed Seaside project photo featuring custom exterior elements.",
     title: "Custom exterior elements",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMG_3207,
     alt: "Finished build with resilient materials for coastal conditions.",
     title: "Coastal-durable exterior",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMG_3266,
     alt: "Completed construction portfolio image from Seaside Contracting.",
     title: "Portfolio exterior project",
-    audience: "both",
+    audience: "commercial",
   },
   {
     src: IMAGE_000000,
     alt: "Completed job showcase image from Seaside Contracting.",
     title: "Completed exterior showcase",
-    audience: "both",
+    audience: "commercial",
   },
 ];

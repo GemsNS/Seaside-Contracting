@@ -8,7 +8,7 @@ export type JobShowcaseGalleryProps = { audience: ProjectAudience };
 
 export function JobShowcaseGallery({ audience }: JobShowcaseGalleryProps) {
   const pool = filterShowcaseByAudience(JOB_SHOWCASE_IMAGES, audience);
-  const featured = (pool.length ? pool : JOB_SHOWCASE_IMAGES).slice(0, 8);
+  const featured = pool.slice(0, 8);
   const showcaseHref = `/showcase?audience=${audience}`;
 
   const heading =
@@ -54,24 +54,30 @@ export function JobShowcaseGallery({ audience }: JobShowcaseGalleryProps) {
           </div>
         </Reveal>
 
-        <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          {featured.map((image, idx) => (
-            <Reveal key={`${image.alt}-${idx}`} delay={idx * 0.04} y={20}>
-              <figure className="group relative overflow-hidden rounded-sm border border-zinc-200/80 bg-zinc-100">
-                <div className="relative aspect-[4/3]">
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    fill
-                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    placeholder="blur"
-                  />
-                </div>
-              </figure>
-            </Reveal>
-          ))}
-        </div>
+        {featured.length ? (
+          <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            {featured.map((image, idx) => (
+              <Reveal key={`${image.alt}-${idx}`} delay={idx * 0.04} y={20}>
+                <figure className="group relative overflow-hidden rounded-sm border border-zinc-200/80 bg-zinc-100">
+                  <div className="relative aspect-[4/3]">
+                    <Image
+                      src={image.src}
+                      alt={image.alt}
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      placeholder="blur"
+                    />
+                  </div>
+                </figure>
+              </Reveal>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-10 rounded-sm border border-zinc-300 bg-white px-5 py-4 text-sm text-zinc-600">
+            No audience-matched gallery photos are tagged yet.
+          </div>
+        )}
       </div>
     </section>
   );
