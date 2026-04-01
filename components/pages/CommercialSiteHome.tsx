@@ -11,6 +11,7 @@ import {
 import { About } from "@/components/sections/About";
 import { Contact } from "@/components/sections/Contact";
 import { ExteriorDesigner } from "@/components/sections/ExteriorDesigner";
+import { Hero } from "@/components/sections/Hero";
 import { QuoteInvitation } from "@/components/sections/QuoteInvitation";
 import { filterShowcaseByAudience } from "@/lib/audience";
 import { JOB_SHOWCASE_IMAGES } from "@/lib/jobShowcaseImages";
@@ -48,7 +49,9 @@ export function CommercialSiteHome({ pricingItems }: CommercialSiteHomeProps) {
 
   return (
     <>
-      <section className="relative overflow-hidden border-b border-zinc-800 bg-zinc-950 pt-28 text-white sm:pt-32">
+      <Hero audience="commercial" />
+
+      <section className="relative overflow-hidden border-b border-zinc-800 bg-zinc-950 pt-16 text-white sm:pt-20">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_15%,rgba(45,212,191,0.16),transparent_45%),radial-gradient(circle_at_85%_20%,rgba(148,163,184,0.12),transparent_38%)]" />
         <div className="mx-auto grid max-w-7xl gap-14 px-4 pb-20 sm:px-6 lg:grid-cols-12 lg:gap-10 lg:px-8 lg:pb-24">
           <div className="relative z-10 lg:col-span-7">
